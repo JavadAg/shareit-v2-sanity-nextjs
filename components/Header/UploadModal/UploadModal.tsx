@@ -1,101 +1,221 @@
-import React, { useState } from "react"
-import { IoCloudUploadOutline } from "react-icons/io5"
+import React, { useCallback, useEffect, useRef, useState } from "react"
+import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
+import UploadSVG from "./UploadSVG"
+import { MdDeleteForever } from "react-icons/md"
+import { categories } from "../../../utils/constants"
+import Resizer from "react-image-file-resizer"
+import makeid from "../../../utils/makeid"
+import { spawn } from "child_process"
+import { setDefaultResultOrder } from "dns/promises"
+import { client } from "../../../utils/client"
 
-const categories = ["Gaming", "Nature"]
+const imageTypes = /image\/(png|jpg|jpeg|webp)/i
+const videoTypes = /video\/(mp4|webm)/i
 
 const UploadModal = () => {
-  const [videoAsset, setvideoAsset] = useState<any>(false)
-  const [loading, setloading] = useState(false)
-  const [postFiles, setPostFiles] = useState<string[]>([])
+  const [files, setFiles] = useState<File[]>()
+  const [caption, setCaption] = useState("")
+  const [category, setCategory] = useState("")
+  const [modalToggle, setModalToggle] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [filePreview, setFilePreview] = useState<{
+    imagesURL: string[]
+    videosURL: string[]
+  }>({
+    imagesURL: [],
+    videosURL: []
+  })
+  const [error, setError] = useState<string>("")
 
-  const previewhandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileArray = Array.from(e.target.files!)
-    for (let i = 0; i < fileArray.length; i++) {
-      const url: string = URL.createObjectURL(fileArray[i])
-      console.log(url)
-      setPostFiles((prev) => [...prev, url])
+  const resizeFile = (file: File) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        1500,
+        1500,
+        "webp",
+        100,
+        0,
+        (uri) => {
+          resolve(uri)
+        },
+        "blob"
+      )
+    })
+
+  const previewhandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("")
+    if (e.target.files!?.length > 5) {
+      setError("More than 5 file selected")
+      return
     }
+    let count = 0
+    let fileArray: File[] = []
+    for (const iterator of e.target.files!) {
+      if (iterator.type.match(videoTypes)) {
+        count = count + 1
+        if (iterator.size > 25000000 || count > 1) {
+          setError("Select only 1 video up to 20MB")
+          return
+        }
+        fileArray.push(iterator)
+      }
+      if (iterator.type.match(imageTypes)) {
+        const resizedImage = (await resizeFile(iterator)) as File
+        const newImage = new File(
+          [resizedImage],
+          `${makeid(10) + Date.now()}.webp`,
+          {
+            type: "image/webp"
+          }
+        )
+        fileArray.push(newImage)
+      }
+    }
+
+    const filesURL: { imagesURL: string[]; videosURL: string[] } = {
+      imagesURL: [],
+      videosURL: []
+    }
+    for (let i = 0; i < fileArray.length; i++) {
+      if (fileArray[i].type.match(imageTypes)) {
+        const url: string = URL.createObjectURL(fileArray[i])
+        filesURL.imagesURL.push(url)
+      } else if (fileArray[i].type.match(videoTypes)) {
+        const url: string = URL.createObjectURL(fileArray[i])
+        filesURL.videosURL.push(url)
+      }
+    }
+    setFilePreview(filesURL)
+    setFiles(fileArray)
+  }
+
+  const deleteFiles = () => {
+    setFilePreview({
+      imagesURL: [],
+      videosURL: []
+    })
+    setFiles(undefined)
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    files!.forEach((element) => {
+      client.assets
+        .upload("file", element, {
+          contentType: element.type,
+          filename: element.name
+        })
+        .then((data) => {
+          setLoading(false)
+          console.log(data)
+        })
+    })
   }
 
   return (
-    <div>
-      <label className="btn btn-secondary" htmlFor="upload-modal">
+    <>
+      <button onClick={() => setModalToggle(true)} className="btn btn-primary">
         Upload Post
-      </label>
-      <input type="checkbox" id="upload-modal" className="modal-toggle" />
-      <label htmlFor="upload-modal" className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
-          <h3 className="text-lg font-bold">Share with friends!</h3>
-          <div className="bg-base-100 rounded-lg flex gap-6 flex-wrap justify-center items-center p-4 pt-6">
-            <label className="border-dashed rounded-xl border-4 flex flex-col justify-center items-center outline-none mt-10 p-5 cursor-pointer hover:border-accent hover:bg-base-200">
+      </button>
+      {modalToggle ? (
+        <div
+          onClick={() => {
+            setModalToggle(false)
+          }}
+          className="flex justify-center items-center fixed inset-0 bg-neutral-content bg-opacity-70"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex  justify-center items-center bg-base-100 p-2 rounded-xl flex-col"
+          >
+            <h3 className="text-lg font-bold">Share with friends!</h3>
+            <div className="bg-base-100 rounded-lg flex flex-wrap justify-center items-center p-4">
               {loading ? (
                 <p className="text-center text-3xl text-red-400 font-semibold">
                   Uploading...
                 </p>
               ) : (
-                <div>
-                  {!videoAsset ? (
-                    <label className="cursor-pointer" htmlFor="upload-file">
-                      <div className="flex flex-col items-center justify-center">
-                        <div className="flex flex-col justify-center items-center">
-                          <IoCloudUploadOutline className="md:text-6xl" />
-                          <span className="">
-                            Select video & photo to upload
-                          </span>
-                        </div>
-                        <span className=" text-center mt-10 text-sm leading-10">
-                          Jpg, Png ,Webp, Mp4 <br />
-                          Max 5 file <br />
-                          720x1280 resolution or higher <br />
-                          Less than 20 MB
-                        </span>
-                        <span className="bg-secondary text-center mt-8 rounded  text-md font-medium p-2 w-52 outline-none">
-                          Select file
-                        </span>
+                <form onSubmit={handleSubmit}>
+                  {!files ? (
+                    <label className="border-dashed w-96 h-[28rem] rounded-xl border-4 p-5 flex flex-col justify-center items-center outline-none cursor-pointer hover:border-accent hover:bg-base-300">
+                      <div className="flex flex-col justify-center items-center">
+                        <UploadSVG />
+                        <span className="">Select video & photo to upload</span>
                       </div>
-                      <input
-                        id="upload-file"
-                        type="file"
-                        multiple={true}
-                        name="upload-file"
-                        onChange={(e) => previewhandler(e)}
-                        className="w-0 h-0"
-                      />
-                      <div className="flex justify-center items-center flex-wrap">
-                        {postFiles.map((file) => (
-                          <img src={file} alt="post_preview" className="w-24" />
-                        ))}
+                      <span className=" text-center mt-10 text-sm leading-10">
+                        Jpg, Png ,Webp, Mp4 <br />
+                        Max 5 file <br />
+                        720x1280 resolution or higher <br />
+                        Only 1 video per post <br />
+                        Less than 20 MB
+                      </span>
+                      <div className="form-control w-full max-w-xs">
+                        <input
+                          type="file"
+                          multiple
+                          onChange={(e) => previewhandler(e)}
+                          className="file-input input-bordered w-full max-w-xs"
+                        />
                       </div>
+                      {error.length > 0 ? (
+                        <span className="text-error pt-1">{error}</span>
+                      ) : (
+                        ""
+                      )}
                     </label>
                   ) : (
-                    <div className=" rounded-3xl w-[300px]  p-4 flex flex-col gap-6 justify-center items-center">
-                      <video
-                        className="rounded-xl h-[462px] mt-16 bg-black"
-                        controls
-                        loop
-                        /* src={videoAsset?.url} */
-                      />
-                      <div className=" flex justify-between gap-20">
-                        {/*  <p className="text-lg">
-                            {videoAsset.originalFilename}
-                          </p> */}
-                        <button
-                          type="button"
-                          className=" rounded-full bg-gray-200 text-red-400 p-2 text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                          /*   onClick={() => setVideoAsset(undefined)} */
+                    <>
+                      <PreviewCarousel filePreview={filePreview} />
+                      <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full">
+                        {files ? (
+                          <button
+                            onClick={deleteFiles}
+                            className="btn-error btn text-2xl"
+                          >
+                            <MdDeleteForever />
+                          </button>
+                        ) : (
+                          ""
+                        )}
+                        <input
+                          onChange={(e) => setCaption(e.target.value)}
+                          className="input w-full max-w-xs input-bordered"
+                          type="text"
+                          maxLength={100}
+                          placeholder="caption"
+                        />
+                        <select
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="select select-bordered w-full max-w-xs"
                         >
-                          {/* <MdDelete /> */}
-                        </button>
+                          <option disabled selected>
+                            Pick Category
+                          </option>
+                          {categories.map((category) => (
+                            <option value={category}>{category}</option>
+                          ))}
+                        </select>
+
+                        <input
+                          disabled={caption.length < 1 || category.length < 1}
+                          type="submit"
+                          value="Share it"
+                          className="btn btn-primary w-full max-w-xs"
+                        />
                       </div>
-                    </div>
+                    </>
                   )}
-                </div>
+                </form>
               )}
-            </label>
+            </div>
           </div>
-        </label>
-      </label>
-    </div>
+        </div>
+      ) : (
+        ""
+      )}
+    </>
   )
 }
 
