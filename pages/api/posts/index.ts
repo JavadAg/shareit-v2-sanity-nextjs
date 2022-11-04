@@ -20,5 +20,14 @@ export default async function handler(
     } catch (error) {
       console.log("error", error)
     }
+  } else if (req.method === "POST") {
+    try {
+      const doc = req.body
+      console.log("doc", doc)
+      client.create(doc)
+      res.status(201).json("Upload Successful")
+    } catch (error) {
+      console.log("error", error)
+    }
   }
 }

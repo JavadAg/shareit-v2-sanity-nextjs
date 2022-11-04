@@ -23,7 +23,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.6.0",
     "react-image-file-resizer": "^0.4.8",
-    "theme-change": "^2.2.0"
+    "theme-change": "^2.2.0",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

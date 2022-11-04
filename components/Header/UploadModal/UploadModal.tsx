@@ -5,9 +5,10 @@ import { MdDeleteForever } from "react-icons/md"
 import { categories } from "../../../utils/constants"
 import Resizer from "react-image-file-resizer"
 import makeid from "../../../utils/makeid"
-import { spawn } from "child_process"
-import { setDefaultResultOrder } from "dns/promises"
 import { client } from "../../../utils/client"
+import axios from "axios"
+import { v4 as uuidv4 } from "uuid"
+import { useSession } from "next-auth/react"
 
 const imageTypes = /image\/(png|jpg|jpeg|webp)/i
 const videoTypes = /video\/(mp4|webm)/i
@@ -26,6 +27,11 @@ const UploadModal = () => {
     videosURL: []
   })
   const [error, setError] = useState<string>("")
+  const [isUploading, setIsUploading] = useState(false)
+
+  const { data: session, status } = useSession()
+
+  console.log(session, status)
 
   const resizeFile = (file: File) =>
     new Promise((resolve) => {
@@ -101,17 +107,46 @@ const UploadModal = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    files!.forEach((element) => {
-      client.assets
-        .upload("file", element, {
-          contentType: element.type,
-          filename: element.name
-        })
-        .then((data) => {
-          setLoading(false)
-          console.log(data)
-        })
+    setIsUploading(true)
+
+    const promises = files!.map(async (element) => {
+      const promise = await client.assets.upload("file", element, {
+        contentType: element.type,
+        filename: element.name
+      })
+      return promise
     })
+
+    const uploadedFiles = await Promise.all(promises)
+
+    setIsUploading(false)
+
+    if (caption && !isUploading && uploadedFiles && category) {
+      const doc = {
+        _type: "post",
+        caption,
+        assets: uploadedFiles.map((file) => {
+          return {
+            _type: "file",
+            _key: uuidv4(),
+            asset: {
+              _type: "reference",
+              _ref: file._id
+            }
+          }
+        }),
+        /*  userId: userProfile?._id,
+        postedBy: {
+          _type: "postedBy",
+          _ref: userProfile?._id
+        }, */
+        category
+      }
+
+      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, doc)
+    }
+
+    setLoading(false)
   }
 
   return (
