@@ -2,15 +2,15 @@ import React from "react"
 import Post from "./Post/Post"
 
 interface IProps {
-  videos: any
+  posts: any
 }
 
-const Posts: React.FC<IProps> = ({ videos }) => {
+const Posts: React.FC<IProps> = ({ posts }) => {
   return (
-    <div className="flex justify-center items-center flex-col flex-1 space-y-4 w-full">
-      {/* {videos.map((video: any) => (
-        <Post video={video} />
-      ))} */}
+    <div className="flex justify-center items-center flex-col flex-1 space-y-6 w-full mt-4">
+      {posts.map((post: any) => (
+        <Post key={post._id} post={post} />
+      ))}
     </div>
   )
 }

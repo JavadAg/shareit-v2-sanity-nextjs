@@ -15,7 +15,6 @@ export default async function handler(
     try {
       const query = getAllPosts()
       const data = await client.fetch(query)
-
       res.status(200).json(data)
     } catch (error) {
       console.log("error", error)
@@ -23,7 +22,6 @@ export default async function handler(
   } else if (req.method === "POST") {
     try {
       const doc = req.body
-      console.log("doc", doc)
       client.create(doc)
       res.status(201).json("Upload Successful")
     } catch (error) {

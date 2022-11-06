@@ -2,7 +2,7 @@ import React from "react"
 
 const Sidebar = () => {
   return (
-    <div className="flex justify-between py-2 items-center flex-col bg-gray-100 w-2/12 h-full">
+    <div className="hidden md:flex justify-between py-2 items-center flex-col fixed bg-gray-100 w-2/12 h-screen">
       <button>Home</button>
       <div className="flex justify-center items-center flex-col space-y-2 ">
         <span>Categories</span>

@@ -2,20 +2,21 @@ export const getAllPosts = () => {
   const query = `*[_type == "post"] | order(_createdAt desc){
       _id,
        caption,
-         video[]{
+        assets[]{
+          filetype,
           asset->{
             _id,
-            url
+            url,
           }
         },
         userId,
         postedBy->{
           _id,
-          userName,
-          image
+          name,
+          avatar
         },
       likes,
-      category->{name},
+      category,
       comments[]{
         comment,
         _key,

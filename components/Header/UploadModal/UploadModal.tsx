@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useState } from "react"
 import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
 import UploadSVG from "./UploadSVG"
 import { MdDeleteForever } from "react-icons/md"
@@ -9,6 +9,7 @@ import { client } from "../../../utils/client"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
+import { Session } from "next-auth/core/types"
 
 const imageTypes = /image\/(png|jpg|jpeg|webp)/i
 const videoTypes = /video\/(mp4|webm)/i
@@ -31,14 +32,12 @@ const UploadModal = () => {
 
   const { data: session, status } = useSession()
 
-  console.log(session, status)
-
   const resizeFile = (file: File) =>
     new Promise((resolve) => {
       Resizer.imageFileResizer(
         file,
-        1500,
-        1500,
+        1080,
+        1080,
         "webp",
         100,
         0,
@@ -118,7 +117,6 @@ const UploadModal = () => {
     })
 
     const uploadedFiles = await Promise.all(promises)
-
     setIsUploading(false)
 
     if (caption && !isUploading && uploadedFiles && category) {
@@ -129,17 +127,18 @@ const UploadModal = () => {
           return {
             _type: "file",
             _key: uuidv4(),
+            filetype: file.mimeType,
             asset: {
               _type: "reference",
               _ref: file._id
             }
           }
         }),
-        /*  userId: userProfile?._id,
+        userId: session!.user!.id,
         postedBy: {
           _type: "postedBy",
-          _ref: userProfile?._id
-        }, */
+          _ref: session!.user!.id
+        },
         category
       }
 
@@ -147,11 +146,19 @@ const UploadModal = () => {
     }
 
     setLoading(false)
+    setCaption("")
+    setCategory("")
+    setFiles(undefined)
+    setFilePreview({
+      imagesURL: [],
+      videosURL: []
+    })
+    setModalToggle(false)
   }
 
   return (
     <>
-      <button onClick={() => setModalToggle(true)} className="btn btn-primary">
+      <button onClick={() => setModalToggle(true)} className="">
         Upload Post
       </button>
       {modalToggle ? (
@@ -159,11 +166,11 @@ const UploadModal = () => {
           onClick={() => {
             setModalToggle(false)
           }}
-          className="flex justify-center items-center fixed inset-0 bg-neutral-content bg-opacity-70"
+          className="flex justify-center items-center fixed inset-0 bg-neutral-content bg-opacity-70 z-50"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative flex  justify-center items-center bg-base-100 p-2 rounded-xl flex-col"
+            className="relative flex justify-center items-center bg-gray-400 p-2 rounded-xl flex-col"
           >
             <h3 className="text-lg font-bold">Share with friends!</h3>
             <div className="bg-base-100 rounded-lg flex flex-wrap justify-center items-center p-4">
@@ -186,16 +193,16 @@ const UploadModal = () => {
                         Only 1 video per post <br />
                         Less than 20 MB
                       </span>
-                      <div className="form-control w-full max-w-xs">
+                      <div className="w-full max-w-xs">
                         <input
                           type="file"
                           multiple
                           onChange={(e) => previewhandler(e)}
-                          className="file-input input-bordered w-full max-w-xs"
+                          className="w-full max-w-xs"
                         />
                       </div>
                       {error.length > 0 ? (
-                        <span className="text-error pt-1">{error}</span>
+                        <span className="pt-1">{error}</span>
                       ) : (
                         ""
                       )}
@@ -205,40 +212,46 @@ const UploadModal = () => {
                       <PreviewCarousel filePreview={filePreview} />
                       <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full">
                         {files ? (
-                          <button
-                            onClick={deleteFiles}
-                            className="btn-error btn text-2xl"
-                          >
+                          <button onClick={deleteFiles} className="text-2xl">
                             <MdDeleteForever />
                           </button>
                         ) : (
                           ""
                         )}
-                        <input
-                          onChange={(e) => setCaption(e.target.value)}
-                          className="input w-full max-w-xs input-bordered"
-                          type="text"
-                          maxLength={100}
-                          placeholder="caption"
-                        />
-                        <select
-                          onChange={(e) => setCategory(e.target.value)}
-                          className="select select-bordered w-full max-w-xs"
-                        >
-                          <option disabled selected>
-                            Pick Category
-                          </option>
-                          {categories.map((category) => (
-                            <option value={category}>{category}</option>
-                          ))}
-                        </select>
-
-                        <input
-                          disabled={caption.length < 1 || category.length < 1}
-                          type="submit"
-                          value="Share it"
-                          className="btn btn-primary w-full max-w-xs"
-                        />
+                        {status === "authenticated" ? (
+                          <>
+                            <input
+                              onChange={(e) => setCaption(e.target.value)}
+                              className=" w-full max-w-xs "
+                              type="text"
+                              maxLength={100}
+                              placeholder="caption"
+                            />
+                            <select
+                              onChange={(e) => setCategory(e.target.value)}
+                              className="  w-full max-w-xs"
+                            >
+                              <option disabled selected>
+                                Pick Category
+                              </option>
+                              {categories.map((category) => (
+                                <option value={category}>{category}</option>
+                              ))}
+                            </select>
+                            <input
+                              disabled={
+                                caption.length < 1 || category.length < 1
+                              }
+                              type="submit"
+                              value="Share it"
+                              className=" w-full max-w-xs"
+                            />
+                          </>
+                        ) : (
+                          <span className="p-1 rounded-lg px-2">
+                            Login to send post!
+                          </span>
+                        )}
                       </div>
                     </>
                   )}
