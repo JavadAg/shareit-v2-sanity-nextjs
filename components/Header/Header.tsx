@@ -1,18 +1,25 @@
 import Link from "next/link"
-import React from "react"
+import React, { useState, useCallback } from "react"
 import { signIn, useSession, signOut } from "next-auth/react"
 import UploadModal from "./UploadModal/UploadModal"
 import { useTheme } from "next-themes"
+import axios from "axios"
+import SearchModal from "./SearchModal/SearchModal"
 
 const Header = () => {
   const { data: session, status } = useSession()
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="flex justify-between px-4 py-4 items-center bg-white">
-      <Link href="/">Shareit</Link>
-      <div>Search</div>
-      <div className="space-x-2 flex justify-center items-center">
+    <div className="flex justify-between px-4 py-4 items-center bg-white rounded-b-2xl">
+      <Link href="/">
+        <span className="font-black text-base italic pl-1">Share</span>
+        <span className="font-black text-base italic text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-indigo-600 pr-1">
+          It
+        </span>
+      </Link>
+      <SearchModal />
+      <div className="hidden space-x-2 md:flex justify-center items-center">
         <UploadModal />
         <span>{session?.user?.name}</span>
         {status === "authenticated" ? (

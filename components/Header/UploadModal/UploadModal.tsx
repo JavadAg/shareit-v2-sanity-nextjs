@@ -9,7 +9,6 @@ import { client } from "../../../utils/client"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
-import { Session } from "next-auth/core/types"
 
 const imageTypes = /image\/(png|jpg|jpeg|webp)/i
 const videoTypes = /video\/(mp4|webm)/i

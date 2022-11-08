@@ -1,6 +1,7 @@
 export const getAllPosts = () => {
   const query = `*[_type == "post"] | order(_createdAt desc){
       _id,
+      _createdAt,
        caption,
         assets[]{
           filetype,
@@ -61,32 +62,14 @@ export const postDetailQuery = (postId: string | string[]) => {
 }
 
 export const searchPostsQuery = (searchTerm: string | string[]) => {
-  const query = `*[_type == "post" && caption match '${searchTerm}*' || topic match '${searchTerm}*'] {
+  const query = `[*[_type in ["post", "user"]]
+    [_type == "post" && caption match '${searchTerm}*' || category match '${searchTerm}*']{
       _id,
-       caption,
-         video{
-          asset->{
-            _id,
-            url
-          }
-        },
-        userId,
-      postedBy->{
-        _id,
-        userName,
-        image
-      },
-  likes,
-      comments[]{
-        comment,
-        _key,
-        postedBy->{
-        _id,
-        userName,
-        image
-      },
-      }
-    }`
+      
+    } , *[_type == "user" && name match '${searchTerm}*']{
+      _id,
+    }]`
+
   return query
 }
 
