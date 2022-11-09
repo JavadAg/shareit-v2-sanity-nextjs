@@ -9,7 +9,7 @@ import { client } from "../../../utils/client"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
-import { HiPlusCircle } from "react-icons/hi"
+import { HiPlusCircle, HiOutlineX } from "react-icons/hi"
 
 declare module "next-auth" {
   interface User {
@@ -22,13 +22,13 @@ declare module "next-auth" {
 }
 
 interface FormData {
-  files: File[]
+  files: File[] | undefined
   caption: string
   category: string
   tags: string[]
 }
 const formDataInitData: FormData = {
-  files: [],
+  files: undefined,
   caption: "",
   category: "",
   tags: []
@@ -202,7 +202,7 @@ const UploadModal = () => {
     })
     setModalToggle(false)
   }
-  console.log(formData, formState)
+  console.log(formData.tags)
   return (
     <>
       <button onClick={() => setModalToggle(true)} className="">
@@ -230,7 +230,7 @@ const UploadModal = () => {
                   className="w-full flex justify-center items-center flex-col"
                   onSubmit={handleSubmit}
                 >
-                  {!formData.files.length > 0 ? (
+                  {!formData.files ? (
                     <label className="border-dashed space-y-4 border-gray-400 bg-gray-100 hover:bg-gray-200 rounded-2xl border-4 p-5 flex flex-col justify-center items-center outline-none cursor-pointer m-4">
                       <UploadSVG />
                       <span className="text-center text-sm leading-10">
@@ -278,24 +278,49 @@ const UploadModal = () => {
                               maxLength={100}
                               placeholder="Caption"
                             />
-                            {formData.tags.length > 0 &&
-                              formData.tags.map((tag) => <span>{tag}</span>)}
+                            <div className="flex w-full justify-center items-center flex-wrap gap-1">
+                              {formData.tags.length > 0 &&
+                                formData.tags.map((tag) => (
+                                  <div className=" bg-gray-100 rounded-lg border border-gray-200 shadow-sm p-1 flex justify-center items-center space-x-2 text-center">
+                                    <span className="text-gray-500">
+                                      #{tag}
+                                    </span>
+                                    <button
+                                      className=""
+                                      type="button"
+                                      onClick={() =>
+                                        setFormData({
+                                          tags: formData.tags.filter(
+                                            (i) => i != tag
+                                          )
+                                        })
+                                      }
+                                    >
+                                      <HiOutlineX />
+                                    </button>
+                                  </div>
+                                ))}
+                            </div>
                             <div className="relative flex h-8 justify-center items-center border border-gray-200 rounded-3xl px-2 w-full">
                               <input
                                 className="w-full h-full outline-none"
                                 type="text"
+                                value={tag}
                                 maxLength={15}
                                 onChange={(e) => setTag(e.target.value)}
                                 placeholder="Tags"
                               />
                               <button
-                                disabled={tag.length < 5}
+                                disabled={
+                                  (tag.length < 4, formData.tags.length > 7)
+                                }
                                 type="button"
-                                onClick={() =>
+                                onClick={() => {
                                   setFormData({
                                     tags: [...formData.tags, tag]
-                                  })
-                                }
+                                  }),
+                                    setTag("")
+                                }}
                                 className="p-1 text-2xl absolute right-0 disabled:opacity-30"
                               >
                                 <HiPlusCircle />
@@ -322,7 +347,7 @@ const UploadModal = () => {
                               }
                               type="submit"
                               value="Share it"
-                              className="w-3/4 rounded-3xl h-8 border border-gray-200 px-2 bg-green-200 disabled:bg-green-200/40 disabled:text-gray-200"
+                              className="w-full rounded-3xl h-8 border border-gray-200 px-2 bg-indigo-200 disabled:bg-indigo-200/40 disabled:text-gray-200"
                             />
                           </div>
                         ) : (
