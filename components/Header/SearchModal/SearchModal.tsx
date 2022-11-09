@@ -13,6 +13,7 @@ const SearchModal = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/search/${value}`
       )
       const data = res.data
+
       setSearchData(data)
     }
   }
@@ -32,7 +33,9 @@ const SearchModal = () => {
       </div>
       {isModalOpen ? (
         <div
-          onClick={() => setIsModalOpen(false)}
+          onClick={() => {
+            setSearchData([]), setIsModalOpen(false)
+          }}
           className="flex justify-start pt-44 items-center flex-col fixed inset-0 bg-gray-800 bg-opacity-90 h-screen w-screen z-50"
         >
           <div

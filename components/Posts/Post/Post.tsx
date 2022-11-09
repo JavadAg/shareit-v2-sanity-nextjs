@@ -9,9 +9,11 @@ import {
   HiOutlineBookmarkAlt,
   HiBookmarkAlt
 } from "react-icons/hi"
+import { useSession } from "next-auth/react"
 
 const Post = ({ post }: any) => {
   const [liked, setLiked] = useState(false)
+  const { data: session, status } = useSession()
 
   return (
     <div className="flex justify-center items-center flex-col space-y-2 bg-white w-full h-full rounded-2xl p-2">
@@ -75,6 +77,30 @@ const Post = ({ post }: any) => {
           <HiBookmarkAlt className="absolute w-5 h-5 opacity-0 transition-all duration-1000 ease-out transform overflow-hidden text-gray-700 group-hover:opacity-100 origin-center" />
         </div>
       </div>
+      <div className="flex justify-start items-center bg-gray-100 p-2 text-sm rounded-2xl w-full">
+        <span className="text-gray-800 font-semibold">{post.caption}</span>
+      </div>
+      {status === "authenticated" ? (
+        <div className="flex justify-start items-center w-full space-x-1">
+          <div className="relative block w-10 h-10 ">
+            <Image
+              alt="avatar"
+              loading="lazy"
+              width="50"
+              height="50"
+              src={session?.user.image as string}
+              className="rounded-full max-h-full max-w-full w-auto h-auto object-contain block border-2 border-gray-400 "
+            />
+          </div>
+          <input
+            className="rounded-full border border-gray-200 h-10 text-sm"
+            type="text"
+            placeholder="write a comment"
+          />
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   )
 }

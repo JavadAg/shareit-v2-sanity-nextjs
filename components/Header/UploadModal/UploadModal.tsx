@@ -1,24 +1,68 @@
-import React, { useState } from "react"
+import React, { LegacyRef, useReducer, useRef, useState } from "react"
 import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
 import UploadSVG from "./UploadSVG"
 import { MdDeleteForever } from "react-icons/md"
-import { categories } from "../../../utils/constants"
+import { categories, imageTypes, videoTypes } from "../../../utils/constants"
 import Resizer from "react-image-file-resizer"
 import makeid from "../../../utils/makeid"
 import { client } from "../../../utils/client"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
+import { HiPlusCircle } from "react-icons/hi"
 
-const imageTypes = /image\/(png|jpg|jpeg|webp)/i
-const videoTypes = /video\/(mp4|webm)/i
+declare module "next-auth" {
+  interface User {
+    id: number
+  }
+
+  interface Session {
+    user: User
+  }
+}
+
+interface FormData {
+  files: File[]
+  caption: string
+  category: string
+  tags: string[]
+}
+const formDataInitData: FormData = {
+  files: [],
+  caption: "",
+  category: "",
+  tags: []
+}
+
+interface FormState {
+  error: string
+  loading: boolean
+  isUploading: boolean
+}
+const formStateInitData: FormState = {
+  error: "",
+  loading: false,
+  isUploading: false
+}
 
 const UploadModal = () => {
-  const [files, setFiles] = useState<File[]>()
-  const [caption, setCaption] = useState("")
-  const [category, setCategory] = useState("")
+  const [formData, setFormData] = useReducer(
+    (formData: FormData, setFormData: Partial<FormData>) => ({
+      ...formData,
+      ...setFormData
+    }),
+    formDataInitData
+  )
+
+  const [formState, setFormState] = useReducer(
+    (formState: FormState, setFormState: Partial<FormState>) => ({
+      ...formState,
+      ...setFormState
+    }),
+    formStateInitData
+  )
+
   const [modalToggle, setModalToggle] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [filePreview, setFilePreview] = useState<{
     imagesURL: string[]
     videosURL: string[]
@@ -26,8 +70,8 @@ const UploadModal = () => {
     imagesURL: [],
     videosURL: []
   })
-  const [error, setError] = useState<string>("")
-  const [isUploading, setIsUploading] = useState(false)
+
+  const [tag, setTag] = useState("")
 
   const { data: session, status } = useSession()
 
@@ -48,9 +92,9 @@ const UploadModal = () => {
     })
 
   const previewhandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError("")
+    setFormState({ error: "" })
     if (e.target.files!?.length > 5) {
-      setError("More than 5 file selected")
+      setFormState({ error: "More than 5 file selected" })
       return
     }
     let count = 0
@@ -59,7 +103,7 @@ const UploadModal = () => {
       if (iterator.type.match(videoTypes)) {
         count = count + 1
         if (iterator.size > 25000000 || count > 1) {
-          setError("Select only 1 video up to 20MB")
+          setFormState({ error: "Select only 1 video up to 20MB" })
           return
         }
         fileArray.push(iterator)
@@ -91,7 +135,7 @@ const UploadModal = () => {
       }
     }
     setFilePreview(filesURL)
-    setFiles(fileArray)
+    setFormData({ files: fileArray })
   }
 
   const deleteFiles = () => {
@@ -99,15 +143,14 @@ const UploadModal = () => {
       imagesURL: [],
       videosURL: []
     })
-    setFiles(undefined)
+    setFormData({ files: undefined })
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
-    setIsUploading(true)
+    setFormState({ loading: true, isUploading: true })
 
-    const promises = files!.map(async (element) => {
+    const promises = formData.files!.map(async (element) => {
       const promise = await client.assets.upload("file", element, {
         contentType: element.type,
         filename: element.name
@@ -116,12 +159,19 @@ const UploadModal = () => {
     })
 
     const uploadedFiles = await Promise.all(promises)
-    setIsUploading(false)
+    setFormState({ isUploading: false })
 
-    if (caption && !isUploading && uploadedFiles && category) {
+    if (
+      formData.caption &&
+      !formState.isUploading &&
+      uploadedFiles &&
+      formData.category
+    ) {
+      const { caption, tags, category } = formData
       const doc = {
         _type: "post",
         caption,
+        tags,
         assets: uploadedFiles.map((file) => {
           return {
             _type: "file",
@@ -144,17 +194,15 @@ const UploadModal = () => {
       await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, doc)
     }
 
-    setLoading(false)
-    setCaption("")
-    setCategory("")
-    setFiles(undefined)
+    setFormState({ loading: false })
+    setFormData({ caption: "", tags: [], category: "", files: undefined })
     setFilePreview({
       imagesURL: [],
       videosURL: []
     })
     setModalToggle(false)
   }
-
+  console.log(formData, formState)
   return (
     <>
       <button onClick={() => setModalToggle(true)} className="">
@@ -165,32 +213,31 @@ const UploadModal = () => {
           onClick={() => {
             setModalToggle(false)
           }}
-          className="flex justify-center items-center fixed inset-0 bg-neutral-content bg-opacity-70 z-50"
+          className="flex justify-center bg-gray-300/70 items-center fixed inset-0 z-50"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative flex justify-center items-center bg-gray-400 p-2 rounded-xl flex-col"
+            className="relative flex justify-center items-center bg-white w-full mx-2 p-2 rounded-3xl flex-col space-y-4"
           >
             <h3 className="text-lg font-bold">Share with friends!</h3>
-            <div className="bg-base-100 rounded-lg flex flex-wrap justify-center items-center p-4">
-              {loading ? (
+            <div className="rounded-3xl flex justify-center items-center w-full">
+              {formState.loading ? (
                 <p className="text-center text-3xl text-red-400 font-semibold">
                   Uploading...
                 </p>
               ) : (
-                <form onSubmit={handleSubmit}>
-                  {!files ? (
-                    <label className="border-dashed w-96 h-[28rem] rounded-xl border-4 p-5 flex flex-col justify-center items-center outline-none cursor-pointer hover:border-accent hover:bg-base-300">
-                      <div className="flex flex-col justify-center items-center">
-                        <UploadSVG />
-                        <span className="">Select video & photo to upload</span>
-                      </div>
-                      <span className=" text-center mt-10 text-sm leading-10">
+                <form
+                  className="w-full flex justify-center items-center flex-col"
+                  onSubmit={handleSubmit}
+                >
+                  {!formData.files.length > 0 ? (
+                    <label className="border-dashed space-y-4 border-gray-400 bg-gray-100 hover:bg-gray-200 rounded-2xl border-4 p-5 flex flex-col justify-center items-center outline-none cursor-pointer m-4">
+                      <UploadSVG />
+                      <span className="text-center text-sm leading-10">
                         Jpg, Png ,Webp, Mp4 <br />
                         Max 5 file <br />
-                        720x1280 resolution or higher <br />
-                        Only 1 video per post <br />
-                        Less than 20 MB
+                        1 video per post <br />
+                        Less than 25 MB
                       </span>
                       <div className="w-full max-w-xs">
                         <input
@@ -200,8 +247,8 @@ const UploadModal = () => {
                           className="w-full max-w-xs"
                         />
                       </div>
-                      {error.length > 0 ? (
-                        <span className="pt-1">{error}</span>
+                      {formState.error.length > 0 ? (
+                        <span className="pt-1">{formState.error}</span>
                       ) : (
                         ""
                       )}
@@ -209,26 +256,57 @@ const UploadModal = () => {
                   ) : (
                     <>
                       <PreviewCarousel filePreview={filePreview} />
-                      <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full">
-                        {files ? (
-                          <button onClick={deleteFiles} className="text-2xl">
+                      <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full mx-2">
+                        {formData.files ? (
+                          <button
+                            onClick={deleteFiles}
+                            className="text-2xl text-red-500"
+                          >
                             <MdDeleteForever />
                           </button>
                         ) : (
                           ""
                         )}
                         {status === "authenticated" ? (
-                          <>
+                          <div className="flex justify-center items-center flex-col w-3/4 space-y-2">
                             <input
-                              onChange={(e) => setCaption(e.target.value)}
-                              className=" w-full max-w-xs "
+                              onChange={(e) =>
+                                setFormData({ caption: e.target.value })
+                              }
+                              className="w-full rounded-3xl h-8 border border-gray-200 px-2 outline-none"
                               type="text"
                               maxLength={100}
-                              placeholder="caption"
+                              placeholder="Caption"
                             />
+                            {formData.tags.length > 0 &&
+                              formData.tags.map((tag) => <span>{tag}</span>)}
+                            <div className="relative flex h-8 justify-center items-center border border-gray-200 rounded-3xl px-2 w-full">
+                              <input
+                                className="w-full h-full outline-none"
+                                type="text"
+                                maxLength={15}
+                                onChange={(e) => setTag(e.target.value)}
+                                placeholder="Tags"
+                              />
+                              <button
+                                disabled={tag.length < 5}
+                                type="button"
+                                onClick={() =>
+                                  setFormData({
+                                    tags: [...formData.tags, tag]
+                                  })
+                                }
+                                className="p-1 text-2xl absolute right-0 disabled:opacity-30"
+                              >
+                                <HiPlusCircle />
+                              </button>
+                            </div>
+
                             <select
-                              onChange={(e) => setCategory(e.target.value)}
-                              className="  w-full max-w-xs"
+                              onChange={(e) =>
+                                setFormData({ category: e.target.value })
+                              }
+                              className="w-full rounded-3xl h-8 border border-gray-200 px-2 outline-none"
                             >
                               <option disabled selected>
                                 Pick Category
@@ -239,13 +317,14 @@ const UploadModal = () => {
                             </select>
                             <input
                               disabled={
-                                caption.length < 1 || category.length < 1
+                                formData.caption.length < 1 ||
+                                formData.category.length < 1
                               }
                               type="submit"
                               value="Share it"
-                              className=" w-full max-w-xs"
+                              className="w-3/4 rounded-3xl h-8 border border-gray-200 px-2 bg-green-200 disabled:bg-green-200/40 disabled:text-gray-200"
                             />
-                          </>
+                          </div>
                         ) : (
                           <span className="p-1 rounded-lg px-2">
                             Login to send post!
