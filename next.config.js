@@ -6,7 +6,11 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["lh3.googleusercontent.com", "cdn.sanity.io"]
+    domains: [
+      "lh3.googleusercontent.com",
+      "cdn.sanity.io",
+      "res.cloudinary.com"
+    ]
   }
 }
 

@@ -11,7 +11,7 @@ import MobileNavbar from "./MobileNavbar/MobileNavbar"
 
 const Header = () => {
   const { data: session, status } = useSession()
-  const { theme, setTheme } = useTheme()
+  /* const { theme, setTheme } = useTheme() */
 
   return (
     <div className="flex relative justify-between px-4 py-4 items-center bg-white rounded-b-2xl">
@@ -36,12 +36,12 @@ const Header = () => {
         )}
 
         <div className="inline-block w-10">
-          <input
+          {/*  <input
             type="checkbox"
             onChange={() => {
               theme === "dark" ? setTheme("light") : setTheme("dark")
             }}
-          />
+          /> */}
         </div>
       </div>
       <MobileNavbar />

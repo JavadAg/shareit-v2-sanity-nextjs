@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import { PrevButton, NextButton } from "./PostCarouselButtons"
 import useEmblaCarousel from "embla-carousel-react"
 import Image from "next/image"
+import { fill } from "lodash"
 
 const imageTypes = /image\/(png|jpg|jpeg|webp)/i
 const videoTypes = /video\/(mp4|webm)/i
@@ -46,7 +47,7 @@ const PostCarousel = ({ assets }: any) => {
               className="relative object-cover min-w-full h-full flex justify-center overflow-hidden"
               key={index}
             >
-              {file.filetype?.match(imageTypes) ? (
+              {file.resource_type === "image" ? (
                 <Image
                   alt="post_image"
                   width="0"
@@ -55,10 +56,10 @@ const PostCarousel = ({ assets }: any) => {
                   sizes="(max-width: 768px) 100vw,
                     (max-width: 1200px) 50vw,
                     33vw"
-                  src={file.asset.url}
+                  src={file.url}
                   className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain  block"
                 />
-              ) : file.filetype?.match(videoTypes) ? (
+              ) : file.resource_type === "video" ? (
                 <video src={file.asset.url} />
               ) : (
                 ""

@@ -1,15 +1,19 @@
-import React, { LegacyRef, useReducer, useRef, useState } from "react"
-import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
-import UploadSVG from "./UploadSVG"
-import { MdDeleteForever } from "react-icons/md"
-import { categories, imageTypes, videoTypes } from "../../../utils/constants"
-import Resizer from "react-image-file-resizer"
-import makeid from "../../../utils/makeid"
+import React, { useReducer, useState } from "react"
+import { formSteps } from "../../../utils/constants"
+
 import { client } from "../../../utils/client"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
-import { HiPlusCircle, HiOutlineX } from "react-icons/hi"
+import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi"
+import "react-image-crop/dist/ReactCrop.css"
+import FormPreview from "./FormSteps/FormPreview/FormPreview"
+import FormInfo from "./FormSteps/FormInfo/FormInfo"
+import FormUpload from "./FormSteps/FormUpload/FormUpload"
+import { Area, Point } from "react-easy-crop"
+import { getCroppedImg } from "./FormSteps/FormPreview/canvasUtils"
+import Resizer from "react-image-file-resizer"
+import makeid from "../../../utils/makeid"
 
 declare module "next-auth" {
   interface User {
@@ -19,6 +23,28 @@ declare module "next-auth" {
   interface Session {
     user: User
   }
+}
+
+/* export interface ImagePreview {
+  url?: string
+  id?: number
+  type?: string
+  croppedArea?: { x: number; y: number }
+  croppedAreaPixels?: {
+    width: number
+    height: number
+    x: number
+    y: number
+  }
+}*/
+
+export interface FilePreview {
+  url?: string
+  id?: number
+  type?: string
+  crop?: Point
+  croppedAreaPixels?: Area
+  base64: string
 }
 
 interface FormData {
@@ -63,91 +89,44 @@ const UploadModal = () => {
   )
 
   const [modalToggle, setModalToggle] = useState(false)
-  const [filePreview, setFilePreview] = useState<{
-    imagesURL: string[]
-    videosURL: string[]
-  }>({
-    imagesURL: [],
-    videosURL: []
-  })
+  const [filesPreview, setFilesPreview] = useState<FilePreview[]>([])
+  const [currentStep, setCurrentStep] = useState(0)
+  const [croppedImage, setCroppedImage] = useState<string[]>([])
 
-  const [tag, setTag] = useState("")
+  const stepDisplay = () => {
+    if (currentStep === 0) {
+      return (
+        <FormPreview
+          formState={formState}
+          setFormState={setFormState}
+          formData={formData}
+          setFormData={setFormData}
+          filesPreview={filesPreview}
+          setFilesPreview={setFilesPreview}
+        />
+      )
+    } else if (currentStep === 1) {
+      return (
+        <FormInfo
+          status={status}
+          formState={formState}
+          setFormState={setFormState}
+          formData={formData}
+          setFormData={setFormData}
+          filesPreview={filesPreview}
+          setFilesPreview={setFilesPreview}
+        />
+      )
+    } else if (currentStep === 2 || formState.loading === true) {
+      return <FormUpload />
+    }
+  }
 
   const { data: session, status } = useSession()
 
-  const resizeFile = (file: File) =>
-    new Promise((resolve) => {
-      Resizer.imageFileResizer(
-        file,
-        1080,
-        1080,
-        "webp",
-        100,
-        0,
-        (uri) => {
-          resolve(uri)
-        },
-        "blob"
-      )
-    })
-
-  const previewhandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState({ error: "" })
-    if (e.target.files!?.length > 5) {
-      setFormState({ error: "More than 5 file selected" })
-      return
-    }
-    let count = 0
-    let fileArray: File[] = []
-    for (const iterator of e.target.files!) {
-      if (iterator.type.match(videoTypes)) {
-        count = count + 1
-        if (iterator.size > 25000000 || count > 1) {
-          setFormState({ error: "Select only 1 video up to 20MB" })
-          return
-        }
-        fileArray.push(iterator)
-      }
-      if (iterator.type.match(imageTypes)) {
-        const resizedImage = (await resizeFile(iterator)) as File
-        const newImage = new File(
-          [resizedImage],
-          `${makeid(10) + Date.now()}.webp`,
-          {
-            type: "image/webp"
-          }
-        )
-        fileArray.push(newImage)
-      }
-    }
-
-    const filesURL: { imagesURL: string[]; videosURL: string[] } = {
-      imagesURL: [],
-      videosURL: []
-    }
-    for (let i = 0; i < fileArray.length; i++) {
-      if (fileArray[i].type.match(imageTypes)) {
-        const url: string = URL.createObjectURL(fileArray[i])
-        filesURL.imagesURL.push(url)
-      } else if (fileArray[i].type.match(videoTypes)) {
-        const url: string = URL.createObjectURL(fileArray[i])
-        filesURL.videosURL.push(url)
-      }
-    }
-    setFilePreview(filesURL)
-    setFormData({ files: fileArray })
-  }
-
-  const deleteFiles = () => {
-    setFilePreview({
-      imagesURL: [],
-      videosURL: []
-    })
-    setFormData({ files: undefined })
-  }
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setCurrentStep(currentStep + 1)
     setFormState({ loading: true, isUploading: true })
 
     const promises = formData.files!.map(async (element) => {
@@ -196,13 +175,63 @@ const UploadModal = () => {
 
     setFormState({ loading: false })
     setFormData({ caption: "", tags: [], category: "", files: undefined })
-    setFilePreview({
-      imagesURL: [],
-      videosURL: []
-    })
+    setFilesPreview([])
+    setCurrentStep(0)
     setModalToggle(false)
   }
-  console.log(formData.tags)
+
+  const resizeFile = (file: File) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        1080,
+        1080,
+        "webp",
+        100,
+        0,
+        (uri) => {
+          resolve(uri)
+        },
+        "blob"
+      )
+    })
+  console.log(filesPreview)
+  const handleNextButton = async () => {
+    //crop and resize image
+
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
+      filesPreview
+    )
+
+    const data = res.data
+    console.log(data)
+    /*  filesPreview.map(async (element: FilePreview) => {
+      const croppedFile: any = await getCroppedImg(element)
+      if (croppedImage.length === 0) {
+        setCroppedImage((prev) => [...prev, croppedFile])
+      }
+    })
+
+    let fileArray: File[] = []
+    setCurrentStep(currentStep + 1) */
+    /*   filesPreview.map(async (obj) => {
+      if (obj.type === "image") {
+        const resizedImage = (await resizeFile(obj)) as File
+        const newImage = new File(
+          [resizedImage],
+          `${makeid(10) + Date.now()}.webp`,
+          {
+            type: "image/webp"
+          }
+        )
+        fileArray.push(newImage)
+      }
+    })
+
+    setFormData({ files: fileArray }) */
+  }
+
   return (
     <>
       <button onClick={() => setModalToggle(true)} className="">
@@ -217,149 +246,67 @@ const UploadModal = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative flex justify-center items-center bg-white w-full mx-2 p-2 rounded-3xl flex-col space-y-4"
+            className="flex relative justify-center items-center bg-white w-full mx-2 p-2 rounded-3xl flex-col space-y-4"
           >
-            <h3 className="text-lg font-bold">Share with friends!</h3>
-            <div className="rounded-3xl flex justify-center items-center w-full">
-              {formState.loading ? (
-                <p className="text-center text-3xl text-red-400 font-semibold">
-                  Uploading...
-                </p>
-              ) : (
-                <form
-                  className="w-full flex justify-center items-center flex-col"
-                  onSubmit={handleSubmit}
-                >
-                  {!formData.files ? (
-                    <label className="border-dashed space-y-4 border-gray-400 bg-gray-100 hover:bg-gray-200 rounded-2xl border-4 p-5 flex flex-col justify-center items-center outline-none cursor-pointer m-4">
-                      <UploadSVG />
-                      <span className="text-center text-sm leading-10">
-                        Jpg, Png ,Webp, Mp4 <br />
-                        Max 5 file <br />
-                        1 video per post <br />
-                        Less than 25 MB
-                      </span>
-                      <div className="w-full max-w-xs">
-                        <input
-                          type="file"
-                          multiple
-                          onChange={(e) => previewhandler(e)}
-                          className="w-full max-w-xs"
-                        />
-                      </div>
-                      {formState.error.length > 0 ? (
-                        <span className="pt-1">{formState.error}</span>
-                      ) : (
-                        ""
-                      )}
-                    </label>
-                  ) : (
-                    <>
-                      <PreviewCarousel filePreview={filePreview} />
-                      <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full mx-2">
-                        {formData.files ? (
-                          <button
-                            onClick={deleteFiles}
-                            className="text-2xl text-red-500"
-                          >
-                            <MdDeleteForever />
-                          </button>
-                        ) : (
-                          ""
-                        )}
-                        {status === "authenticated" ? (
-                          <div className="flex justify-center items-center flex-col w-3/4 space-y-2">
-                            <input
-                              onChange={(e) =>
-                                setFormData({ caption: e.target.value })
-                              }
-                              className="w-full rounded-3xl h-8 border border-gray-200 px-2 outline-none"
-                              type="text"
-                              maxLength={100}
-                              placeholder="Caption"
-                            />
-                            <div className="flex w-full justify-center items-center flex-wrap gap-1">
-                              {formData.tags.length > 0 &&
-                                formData.tags.map((tag) => (
-                                  <div className=" bg-gray-100 rounded-lg border border-gray-200 shadow-sm p-1 flex justify-center items-center space-x-2 text-center">
-                                    <span className="text-gray-500">
-                                      #{tag}
-                                    </span>
-                                    <button
-                                      className=""
-                                      type="button"
-                                      onClick={() =>
-                                        setFormData({
-                                          tags: formData.tags.filter(
-                                            (i) => i != tag
-                                          )
-                                        })
-                                      }
-                                    >
-                                      <HiOutlineX />
-                                    </button>
-                                  </div>
-                                ))}
-                            </div>
-                            <div className="relative flex h-8 justify-center items-center border border-gray-200 rounded-3xl px-2 w-full">
-                              <input
-                                className="w-full h-full outline-none"
-                                type="text"
-                                value={tag}
-                                maxLength={15}
-                                onChange={(e) => setTag(e.target.value)}
-                                placeholder="Tags"
-                              />
-                              <button
-                                disabled={
-                                  (tag.length < 4, formData.tags.length > 7)
-                                }
-                                type="button"
-                                onClick={() => {
-                                  setFormData({
-                                    tags: [...formData.tags, tag]
-                                  }),
-                                    setTag("")
-                                }}
-                                className="p-1 text-2xl absolute right-0 disabled:opacity-30"
-                              >
-                                <HiPlusCircle />
-                              </button>
-                            </div>
+            <div className="flex justify-between items-center w-full">
+              <button
+                type="button"
+                disabled={currentStep === 0}
+                onClick={() => setCurrentStep(currentStep - 1)}
+                className=" bg-gray-100 rounded-full top-4 left-4 text-lg p-1 disabled:opacity-0"
+              >
+                <HiOutlineArrowSmLeft />
+              </button>
 
-                            <select
-                              onChange={(e) =>
-                                setFormData({ category: e.target.value })
-                              }
-                              className="w-full rounded-3xl h-8 border border-gray-200 px-2 outline-none"
-                            >
-                              <option disabled selected>
-                                Pick Category
-                              </option>
-                              {categories.map((category) => (
-                                <option value={category}>{category}</option>
-                              ))}
-                            </select>
-                            <input
-                              disabled={
-                                formData.caption.length < 1 ||
-                                formData.category.length < 1
-                              }
-                              type="submit"
-                              value="Share it"
-                              className="w-full rounded-3xl h-8 border border-gray-200 px-2 bg-indigo-200 disabled:bg-indigo-200/40 disabled:text-gray-200"
-                            />
-                          </div>
-                        ) : (
-                          <span className="p-1 rounded-lg px-2">
-                            Login to send post!
-                          </span>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </form>
-              )}
+              <h3 className="text-lg font-bold">Share with friends!</h3>
+
+              <button
+                type="button"
+                disabled={filesPreview.length < 1 || currentStep === 1}
+                onClick={handleNextButton}
+                className=" bg-gray-100 rounded-full top-4 right-4 text-lg p-1 disabled:opacity-0"
+              >
+                <HiOutlineArrowSmRight />
+              </button>
+            </div>
+            <div className="flex relative justify-evenly items-center w-full">
+              <div className="w-36 h-full absolute flex justify-center items-center">
+                <div
+                  className={`bg-indigo-500 h-2 block left-0 absolute ${
+                    currentStep === 0
+                      ? "w-0"
+                      : currentStep === 1
+                      ? "w-2/4"
+                      : "w-full"
+                  }`}
+                ></div>
+              </div>
+              {formSteps.map((step, index) => (
+                <>
+                  <div
+                    className={`
+                    ${
+                      index === currentStep
+                        ? "bg-indigo-400"
+                        : index < currentStep
+                        ? "bg-indigo-500"
+                        : "bg-indigo-100"
+                    } 
+                     rounded-full h-8 w-8 flex justify-center items-center relative`}
+                  >
+                    {index}
+                  </div>
+                </>
+              ))}
+            </div>
+            <span>{formSteps[currentStep]}</span>
+            <div className="rounded-3xl flex justify-center items-center w-full">
+              <form
+                className="w-full flex justify-center items-center flex-col"
+                onSubmit={handleSubmit}
+              >
+                {stepDisplay()}
+              </form>
             </div>
           </div>
         </div>

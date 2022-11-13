@@ -4,11 +4,10 @@ export const getAllPosts = () => {
       _createdAt,
        caption,
         assets[]{
-          filetype,
-          asset->{
-            _id,
-            url,
-          }
+          resource_type,
+          _key,
+          url,
+         
         },
         userId,
         postedBy->{

@@ -11,3 +11,5 @@ export const categories = [
 
 export const imageTypes = /image\/(png|jpg|jpeg|webp)/i
 export const videoTypes = /video\/(mp4|webm)/i
+
+export const formSteps = ["Select files", "Fill information", "Uploading..."]
