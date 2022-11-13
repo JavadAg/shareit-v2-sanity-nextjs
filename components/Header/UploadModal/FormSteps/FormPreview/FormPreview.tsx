@@ -1,16 +1,13 @@
-import React, { Dispatch, useCallback, useEffect, useState } from "react"
+import React, { Dispatch, useCallback, useState } from "react"
 import { MdDeleteForever } from "react-icons/md"
 import UploadSVG from "../../../../../assets/UploadSVG"
 import { imageTypes, videoTypes } from "../../../../../utils/constants"
-import makeid from "../../../../../utils/makeid"
 import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
-import { getCroppedImg } from "./canvasUtils"
 import { FilePreview } from "../../UploadModal"
 import { Point } from "react-easy-crop"
 import { toBase64 } from "../../../../../utils/toBase64"
 
 interface FormData {
-  files: File[] | undefined
   caption: string
   category: string
   tags: string[]
@@ -34,14 +31,12 @@ interface IProps {
 const FormPreview: React.FC<IProps> = ({
   formState,
   setFormState,
-  formData,
   setFormData,
   filesPreview,
   setFilesPreview
 }) => {
   const deleteFiles = () => {
     setFilesPreview([])
-    setFormData({ files: undefined })
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

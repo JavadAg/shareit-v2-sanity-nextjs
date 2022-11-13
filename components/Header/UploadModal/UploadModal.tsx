@@ -11,10 +11,7 @@ import FormPreview from "./FormSteps/FormPreview/FormPreview"
 import FormInfo from "./FormSteps/FormInfo/FormInfo"
 import FormUpload from "./FormSteps/FormUpload/FormUpload"
 import { Area, Point } from "react-easy-crop"
-import { getCroppedImg } from "./FormSteps/FormPreview/canvasUtils"
-import Resizer from "react-image-file-resizer"
-import makeid from "../../../utils/makeid"
-
+import { UploadApiResponse } from "cloudinary"
 declare module "next-auth" {
   interface User {
     id: number
@@ -24,19 +21,6 @@ declare module "next-auth" {
     user: User
   }
 }
-
-/* export interface ImagePreview {
-  url?: string
-  id?: number
-  type?: string
-  croppedArea?: { x: number; y: number }
-  croppedAreaPixels?: {
-    width: number
-    height: number
-    x: number
-    y: number
-  }
-}*/
 
 export interface FilePreview {
   url?: string
@@ -48,13 +32,11 @@ export interface FilePreview {
 }
 
 interface FormData {
-  files: File[] | undefined
   caption: string
   category: string
   tags: string[]
 }
 const formDataInitData: FormData = {
-  files: undefined,
   caption: "",
   category: "",
   tags: []
@@ -91,7 +73,6 @@ const UploadModal = () => {
   const [modalToggle, setModalToggle] = useState(false)
   const [filesPreview, setFilesPreview] = useState<FilePreview[]>([])
   const [currentStep, setCurrentStep] = useState(0)
-  const [croppedImage, setCroppedImage] = useState<string[]>([])
 
   const stepDisplay = () => {
     if (currentStep === 0) {
@@ -129,21 +110,19 @@ const UploadModal = () => {
     setCurrentStep(currentStep + 1)
     setFormState({ loading: true, isUploading: true })
 
-    const promises = formData.files!.map(async (element) => {
-      const promise = await client.assets.upload("file", element, {
-        contentType: element.type,
-        filename: element.name
-      })
-      return promise
-    })
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
+      filesPreview
+    )
 
-    const uploadedFiles = await Promise.all(promises)
+    const uploaded_files: UploadApiResponse[] = await res.data
+
     setFormState({ isUploading: false })
 
     if (
       formData.caption &&
       !formState.isUploading &&
-      uploadedFiles &&
+      uploaded_files &&
       formData.category
     ) {
       const { caption, tags, category } = formData
@@ -151,15 +130,26 @@ const UploadModal = () => {
         _type: "post",
         caption,
         tags,
-        assets: uploadedFiles.map((file) => {
+        assets: uploaded_files.map((file) => {
           return {
-            _type: "file",
+            _type: "cloudinary.asset",
             _key: uuidv4(),
-            filetype: file.mimeType,
-            asset: {
-              _type: "reference",
-              _ref: file._id
-            }
+            _version: 1,
+            access_mode: "public",
+            bytes: file.bytes,
+            created_at: file.created_at,
+            duration: file.duration,
+            format: file.format,
+            height: file.height,
+            metadata: file.metadata,
+            public_id: file.public_id,
+            resource_type: file.resource_type,
+            secure_url: file.secure_url,
+            tags: file.tags,
+            type: file.type,
+            url: file.url,
+            version: file.version,
+            width: file.width
           }
         }),
         userId: session!.user!.id,
@@ -171,65 +161,17 @@ const UploadModal = () => {
       }
 
       await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, doc)
-    }
 
-    setFormState({ loading: false })
-    setFormData({ caption: "", tags: [], category: "", files: undefined })
-    setFilesPreview([])
-    setCurrentStep(0)
-    setModalToggle(false)
+      setFormState({ loading: false })
+      setFormData({ caption: "", tags: [], category: "" })
+      setFilesPreview([])
+      setCurrentStep(0)
+      setModalToggle(false)
+    }
   }
 
-  const resizeFile = (file: File) =>
-    new Promise((resolve) => {
-      Resizer.imageFileResizer(
-        file,
-        1080,
-        1080,
-        "webp",
-        100,
-        0,
-        (uri) => {
-          resolve(uri)
-        },
-        "blob"
-      )
-    })
-  console.log(filesPreview)
   const handleNextButton = async () => {
     //crop and resize image
-
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
-      filesPreview
-    )
-
-    const data = res.data
-    console.log(data)
-    /*  filesPreview.map(async (element: FilePreview) => {
-      const croppedFile: any = await getCroppedImg(element)
-      if (croppedImage.length === 0) {
-        setCroppedImage((prev) => [...prev, croppedFile])
-      }
-    })
-
-    let fileArray: File[] = []
-    setCurrentStep(currentStep + 1) */
-    /*   filesPreview.map(async (obj) => {
-      if (obj.type === "image") {
-        const resizedImage = (await resizeFile(obj)) as File
-        const newImage = new File(
-          [resizedImage],
-          `${makeid(10) + Date.now()}.webp`,
-          {
-            type: "image/webp"
-          }
-        )
-        fileArray.push(newImage)
-      }
-    })
-
-    setFormData({ files: fileArray }) */
   }
 
   return (
@@ -263,7 +205,7 @@ const UploadModal = () => {
               <button
                 type="button"
                 disabled={filesPreview.length < 1 || currentStep === 1}
-                onClick={handleNextButton}
+                onClick={() => setCurrentStep(currentStep + 1)}
                 className=" bg-gray-100 rounded-full top-4 right-4 text-lg p-1 disabled:opacity-0"
               >
                 <HiOutlineArrowSmRight />
