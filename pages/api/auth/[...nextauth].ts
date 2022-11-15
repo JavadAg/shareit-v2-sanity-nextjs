@@ -2,8 +2,6 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { client } from "../../../utils/client"
 
-
-
 export default NextAuth({
   providers: [
     GoogleProvider({
@@ -28,8 +26,11 @@ export default NextAuth({
           _id: profile.sub,
           _type: "user",
           name: profile.name,
+          description: "New User",
           email: profile.email,
-          avatar: profile.picture
+          avatar: profile.picture,
+          followers: [],
+          following: []
         }
         client
           .createIfNotExists(user)

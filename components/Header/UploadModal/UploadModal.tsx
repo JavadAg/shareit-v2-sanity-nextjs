@@ -156,6 +156,7 @@ const UploadModal = () => {
           _ref: session!.user!.id
         },
         category,
+        savedBy: [],
         comments: [],
         likes: []
       }

@@ -1,22 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import React, { useState, useCallback } from "react"
+import React from "react"
 import { signIn, useSession, signOut } from "next-auth/react"
 import UploadModal from "./UploadModal/UploadModal"
 import { useTheme } from "next-themes"
-import axios from "axios"
 import SearchModal from "./SearchModal/SearchModal"
 import MobileNavbar from "./MobileNavbar/MobileNavbar"
 
 const Header = () => {
   const { data: session, status } = useSession()
-  /* const { theme, setTheme } = useTheme() */
+  const { theme, setTheme } = useTheme()
 
   return (
-    <div className="flex relative justify-between px-4 py-4 items-center bg-white rounded-b-2xl">
+    <div className="flex relative justify-between px-4 h-16 items-center bg-white rounded-b-3xl ">
       <Link href="/">
-        <span className="font-black text-base italic pl-1">Share</span>
+        <span className="font-black text-base italic">Share</span>
         <span className="font-black text-base italic text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-indigo-600 pr-1">
           It
         </span>
@@ -36,12 +35,12 @@ const Header = () => {
         )}
 
         <div className="inline-block w-10">
-          {/*  <input
+          <input
             type="checkbox"
             onChange={() => {
               theme === "dark" ? setTheme("light") : setTheme("dark")
             }}
-          /> */}
+          />
         </div>
       </div>
       <MobileNavbar />

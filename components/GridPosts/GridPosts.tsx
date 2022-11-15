@@ -1,12 +1,12 @@
 import React, { useState } from "react"
 import Image from "next/image"
-import PostDetails from "../PostDetails/PostDetails"
+import PostModal from "./PostModal/PostModal"
 
 const GridPosts = ({ posts }: any) => {
   const [toggleModal, setToggleModal] = useState(false)
   console.log(toggleModal)
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,_minmax(30%,_1fr))] auto-rows-[50px] gap-2 p-2">
+    <div className="grid grid-cols-[repeat(auto-fill,_minmax(45%,_1fr))] auto-rows-[50px] gap-2 p-2">
       {posts.map((post: any) => (
         <React.Fragment key={post._id}>
           <div
@@ -48,7 +48,7 @@ const GridPosts = ({ posts }: any) => {
             )}
           </div>
           {toggleModal && (
-            <PostDetails
+            <PostModal
               post={post}
               toggleModa={toggleModal}
               setToggleModal={setToggleModal}

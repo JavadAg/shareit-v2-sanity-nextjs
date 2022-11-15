@@ -1,7 +1,7 @@
 import React, { useState } from "react"
-import Post from "../Posts/Post/Post"
+import Post from "../../Posts/Post/Post"
 
-const PostDetails = ({ toggleModal, setToggleModal, post }: any) => {
+const PostModal = ({ toggleModal, setToggleModal, post }: any) => {
   return (
     <>
       <div
@@ -19,4 +19,4 @@ const PostDetails = ({ toggleModal, setToggleModal, post }: any) => {
   )
 }
 
-export default PostDetails
+export default PostModal
