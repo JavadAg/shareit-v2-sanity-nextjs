@@ -25,7 +25,13 @@ const uploader = async (file: FilePreview) =>
           y: file.croppedAreaPixels?.y,
           crop: "crop"
         },
-        { height: 1080, width: 1080, crop: "limit" }
+        {
+          height: 1080,
+          width: 1080,
+          crop: "limit",
+          fetch_format: "auto",
+          quality: "70"
+        }
       ]
     })
     .then((result) => uploaded_files.push(result))

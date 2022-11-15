@@ -12,13 +12,11 @@ const manrope = Manrope({ subsets: ["latin"] })
 
 const HomePage: NextPage<IProps> = ({ posts }) => {
   return (
-    <div
-      className={`h-full flex flex-col w-full bg-gray-100 text-slate-800 ${manrope.className}`}
+    <main
+      className={`h-full flex flex-col w-full bg-gray-100 px-2 text-slate-800 ${manrope.className}`}
     >
-      <main className="h-full flex justify-between items-start px-2">
-        <Posts posts={posts} />
-      </main>
-    </div>
+      <Posts posts={posts} />
+    </main>
   )
 }
 

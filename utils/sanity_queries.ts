@@ -7,7 +7,8 @@ export const getAllPosts = () => {
           resource_type,
           _key,
           url,
-         
+          width,
+          height
         },
         userId,
         postedBy->{

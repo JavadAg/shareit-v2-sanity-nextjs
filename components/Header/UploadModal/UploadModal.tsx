@@ -1,12 +1,10 @@
 import React, { useReducer, useState } from "react"
 import { formSteps } from "../../../utils/constants"
-
-import { client } from "../../../utils/client"
+import { RiAddCircleLine } from "react-icons/ri"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
 import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi"
-import "react-image-crop/dist/ReactCrop.css"
 import FormPreview from "./FormSteps/FormPreview/FormPreview"
 import FormInfo from "./FormSteps/FormInfo/FormInfo"
 import FormUpload from "./FormSteps/FormUpload/FormUpload"
@@ -157,7 +155,9 @@ const UploadModal = () => {
           _type: "postedBy",
           _ref: session!.user!.id
         },
-        category
+        category,
+        comments: [],
+        likes: []
       }
 
       await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, doc)
@@ -176,15 +176,18 @@ const UploadModal = () => {
 
   return (
     <>
-      <button onClick={() => setModalToggle(true)} className="">
-        Upload Post
+      <button
+        onClick={() => setModalToggle(true)}
+        className="flex justify-center items-center text-2xl text-gray-700"
+      >
+        <RiAddCircleLine />
       </button>
       {modalToggle ? (
         <div
           onClick={() => {
             setModalToggle(false)
           }}
-          className="flex justify-center bg-gray-300/70 items-center fixed inset-0 z-50"
+          className="flex justify-center bg-gray-300/70 items-center fixed inset-0 z-50 backdrop-blur-md"
         >
           <div
             onClick={(e) => e.stopPropagation()}

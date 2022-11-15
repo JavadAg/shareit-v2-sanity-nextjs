@@ -21,11 +21,11 @@ export default async function RootLayout({ children, props }: RootLayoutProps) {
       </head>
       <body>
         <SessionProvider session={session}>
-          {/*  <ThemeProvider defaultTheme="system"> */}
-          <Header />
-          <Sidebar />
-          {children}
-          {/* </ThemeProvider> */}
+          <ThemeProvider defaultTheme="system">
+            <Header />
+            <Sidebar />
+            {children}
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"
 import useEmblaCarousel from "embla-carousel-react"
-
 import { NextButton, PrevButton } from "./PreviewCarouselButtons"
 import Cropper from "react-easy-crop"
 import { FilePreview } from "../../../UploadModal"

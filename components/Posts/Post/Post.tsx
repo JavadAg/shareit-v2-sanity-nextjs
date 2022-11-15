@@ -10,6 +10,7 @@ import {
   HiBookmarkAlt
 } from "react-icons/hi"
 import { useSession } from "next-auth/react"
+import moment from "moment"
 
 const Post = ({ post }: any) => {
   const [liked, setLiked] = useState(false)
@@ -34,7 +35,7 @@ const Post = ({ post }: any) => {
               {post.postedBy.name}
             </span>
             <span className="text-xs text-gray-500">
-              {post._createdAt.replace("Z", "").replace("T", " ")}
+              {moment(post._createdAt).fromNow()}
             </span>
           </div>
         </div>
