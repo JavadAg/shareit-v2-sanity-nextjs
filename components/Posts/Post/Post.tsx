@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react"
 import moment from "moment"
 import Comments from "./Comments/Comments"
 import Likes from "./Likes/Likes"
+import SavePost from "./SavePost/SavePost"
 
 const Post = ({ post }: any) => {
   const [postDetails, setPostDetails] = useState(post)
@@ -58,10 +59,7 @@ const Post = ({ post }: any) => {
             )}
           </div>
         </div>
-        <div className="relative group text-4xl text-gray-500 flex justify-center items-center border border-gray-200 bg-white rounded-full w-8 h-8">
-          <HiOutlineBookmarkAlt className="w-5 h-5 group-hover:opacity-0 transition-all duration-1000 ease-out" />
-          <HiBookmarkAlt className="absolute w-5 h-5 opacity-0 transition-all duration-1000 ease-out transform overflow-hidden text-gray-700 group-hover:opacity-100 origin-center" />
-        </div>
+        <SavePost postDetails={postDetails} setPostDetails={setPostDetails} />
       </div>
       <div className="flex justify-start items-center bg-gray-100 p-2 text-sm rounded-2xl w-full">
         <span className="text-gray-800 font-semibold">{post.caption}</span>
