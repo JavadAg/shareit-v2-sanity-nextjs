@@ -1,21 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { PrevButton, NextButton } from "./PostCarouselButtons"
 import useEmblaCarousel from "embla-carousel-react"
 import Image from "next/image"
-import { fill } from "lodash"
-
-const imageTypes = /image\/(png|jpg|jpeg|webp)/i
-const videoTypes = /video\/(mp4|webm)/i
 
 const PostCarousel = ({ assets }: any) => {
   const [viewportRef, embla] = useEmblaCarousel({ skipSnaps: false })
-  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false)
-  const [nextBtnEnabled, setNextBtnEnabled] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
 
-  const scrollPrev = useCallback(() => embla && embla.scrollPrev(), [embla])
-  const scrollNext = useCallback(() => embla && embla.scrollNext(), [embla])
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
   const scrollTo = useCallback(
     (index: any) => embla && embla.scrollTo(index),
     [embla]
@@ -24,19 +16,27 @@ const PostCarousel = ({ assets }: any) => {
   const onSelect = useCallback(() => {
     if (!embla) return
     setSelectedIndex(embla.selectedScrollSnap())
-    setPrevBtnEnabled(embla.canScrollPrev())
-    setNextBtnEnabled(embla.canScrollNext())
   }, [embla, setSelectedIndex])
+
+  const onScroll = useCallback(() => {
+    if (!embla) return
+    const progress = Math.max(0, Math.min(1, embla.scrollProgress()))
+    setScrollProgress(progress * 100)
+  }, [embla, setScrollProgress])
 
   useEffect(() => {
     if (!embla) return
     onSelect()
-    setScrollSnaps(embla.scrollSnapList())
+    onScroll()
     embla.on("select", onSelect)
-  }, [embla, setScrollSnaps, onSelect])
+    embla.on("scroll", onScroll)
+  }, [embla, onSelect])
 
   return (
     <div className="relative bg-base-100 w-full h-full rounded-xl ">
+      <div className=" bg-gray-800/70 justify-center items-center flex w-8 h-8 text-center rounded-full absolute top-2 z-50 right-2 text-gray-200 text-sm">
+        {selectedIndex + 1}/{embla?.scrollSnapList().length}
+      </div>
       <div
         className="overflow-hidden w-full h-full cursor-pointer"
         ref={viewportRef}
@@ -68,8 +68,14 @@ const PostCarousel = ({ assets }: any) => {
           ))}
         </div>
       </div>
-      {/* <PrevButton onClick={scrollPrev} enabled={prevBtnEnabled} />
-      <NextButton onClick={scrollNext} enabled={nextBtnEnabled} /> */}
+      {embla?.scrollSnapList().length! > 1 && (
+        <div className="relative bg-white mt-2 max-w-full w-full h-1 overflow-hidden rounded-3xl ml-auto mr-auto">
+          <div
+            className="absolute bg-gradient-to-r from-indigo-400 to-pink-300 w-full top-0 bottom-0 -left-full"
+            style={{ transform: `translateX(${scrollProgress}%)` }}
+          />
+        </div>
+      )}
     </div>
   )
 }

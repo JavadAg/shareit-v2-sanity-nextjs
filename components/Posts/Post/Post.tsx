@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from "react"
 import Image from "next/image"
 import PostCarousel from "./PostCarousel/PostCarousel"
@@ -11,23 +13,35 @@ import {
 } from "react-icons/hi"
 import { useSession } from "next-auth/react"
 import moment from "moment"
+import axios from "axios"
 
 const Post = ({ post }: any) => {
   const [liked, setLiked] = useState(false)
   const { data: session, status } = useSession()
+  const [comment, setComment] = useState("")
 
+  const handleComment = async () => {
+    const userid = session?.user.id
+    const res = await axios.put(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post._id}`,
+      { comment, userid }
+    )
+    const data = res.data
+
+    return data
+  }
   return (
     <div className="flex justify-center items-center flex-col space-y-2 bg-white w-full h-full rounded-2xl p-2">
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-center items-center rounded-3xl space-x-2 relative bg-gray-100 p-2">
-          <div className="relative block w-8 h-8 ">
+          <div className="relative block w-8 h-8 before:content-[''] before:rounded-full before:-top-0.5 before:-left-0.5 before:bg-gradient-to-br from-indigo-200 to-pink-300 before:absolute before:w-9 before:h-9 before:block">
             <Image
               alt="avatar"
               loading="lazy"
               width="35"
               height="35"
               src={post?.postedBy?.avatar}
-              className="rounded-full max-h-full max-w-full w-auto h-auto object-contain block border-2 border-gray-400"
+              className="rounded-full relative max-h-full max-w-full w-auto h-auto object-contain block border-2 border-gray-400 "
             />
           </div>
           <div className="flex justify-center items-start flex-col text-sm text-start">
@@ -87,17 +101,22 @@ const Post = ({ post }: any) => {
             <Image
               alt="avatar"
               loading="lazy"
-              width="50"
-              height="50"
+              fill
               src={session?.user.image as string}
-              className="rounded-full max-h-full max-w-full w-auto h-auto object-contain block border-2 border-gray-400 "
+              className="rounded-full max-h-full max-w-full w-auto h-auto block border-2 border-gray-100 "
             />
           </div>
-          <input
-            className="rounded-full border border-gray-200 h-10 text-sm"
-            type="text"
-            placeholder="write a comment"
-          />
+          <div className="flex justify-center items-center rounded-full border border-gray-200 h-10 text-sm px-2">
+            <input
+              onChange={(e) => setComment(e.target.value)}
+              maxLength={40}
+              contentEditable="true"
+              className="h-full w-full rounded-3xl"
+              type="text"
+              placeholder="write a comment"
+            />
+            <button onClick={() => handleComment()}>Send</button>
+          </div>
         </div>
       ) : (
         ""
