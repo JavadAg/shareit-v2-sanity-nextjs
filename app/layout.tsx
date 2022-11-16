@@ -25,7 +25,7 @@ export default async function RootLayout({ children, props }: RootLayoutProps) {
       <body>
         <SessionProvider session={session}>
           <ThemeProvider defaultTheme="system">
-            <div className={`bg-gray-100 ${manrope.className}`}>
+            <div className={`bg-gray-100 ${manrope.className} pb-16`}>
               <Header />
               <Sidebar />
               {children}

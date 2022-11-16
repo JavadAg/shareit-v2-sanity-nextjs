@@ -34,9 +34,12 @@ const PostCarousel = ({ assets }: any) => {
 
   return (
     <div className="relative bg-base-100 w-full h-full rounded-xl ">
-      <div className=" bg-gray-800/70 justify-center items-center flex w-8 h-8 text-center rounded-full absolute top-2 z-50 right-2 text-gray-200 text-sm">
-        {selectedIndex + 1}/{embla?.scrollSnapList().length}
-      </div>
+      {embla?.scrollSnapList().length! > 1 && (
+        <div className=" bg-gray-800/70 justify-center items-center flex w-8 h-8 text-center rounded-full absolute top-2 z-50 right-2 text-gray-200 text-sm">
+          {selectedIndex + 1}/{embla?.scrollSnapList().length}
+        </div>
+      )}
+
       <div
         className="overflow-hidden w-full h-full cursor-pointer"
         ref={viewportRef}

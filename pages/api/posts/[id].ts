@@ -13,7 +13,7 @@ export default async function handler(
         const { comment, userid } = req.body
 
         const { id }: any = req.query
-        console.log(req.body, req.query)
+
         const data = await client
           .patch(id)
           .setIfMissing({ comments: [] })

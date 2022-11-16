@@ -22,7 +22,7 @@ const SearchModal = () => {
     debounce((e) => handleDebounceFn(e.target.value), 1000),
     []
   )
-
+  console.log(searchData)
   return (
     <div className="flex relative justify-center items-center rounded-full min-w-[2rem] h-8">
       <div
@@ -39,14 +39,14 @@ const SearchModal = () => {
           className="flex justify-start pt-44 items-center flex-col fixed inset-0 bg-gray-800 bg-opacity-90 h-screen w-screen z-50"
         >
           <div
-            className="flex justify-center items-center flex-col space-y-2"
+            className="flex justify-center items-center flex-col space-y-2 w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <span className="text-gray-200">Search for users</span>
             <input
               type="search"
               onChange={(e) => debounceFn(e)}
-              className="bg-gray-200 h-8 w-44 rounded-full outline-none border-none "
+              className="bg-gray-200 h-8 w-4/6 rounded-2xl outline-none border-none px-2"
             />
             {searchData[0]?.length > 0 || searchData[1]?.length > 0 ? (
               <div className="flex justify-center items-center bg-gray-200">

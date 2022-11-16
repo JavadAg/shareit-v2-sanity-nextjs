@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from "react"
 import Image from "next/image"
 import GridPosts from "../GridPosts/GridPosts"
@@ -11,7 +13,7 @@ import {
 
 const Profile = ({ userData }: any) => {
   const [togglePostView, setTogglePostView] = useState(false)
-  console.log(userData)
+
   return (
     <div className="flex justify-center items-center bg-white rounded-3xl w-full h-full flex-col gap-4 p-2">
       <div className="flex justify-evenly items-center w-full">

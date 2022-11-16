@@ -16,6 +16,7 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
 
   const handleLike = async () => {
     if (status === "authenticated") {
+      setIsLoading(true)
       const userid = session?.user.id
       const res = await axios.put(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postDetails._id}`,
@@ -23,9 +24,7 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
       )
       const data = res.data
       setPostDetails({ ...postDetails, likes: res.data.likes })
-
       setIsLoading(false)
-
       return data
     }
   }

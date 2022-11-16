@@ -18,6 +18,7 @@ export const getAllPosts = () => {
         },
       likes,
       category,
+      tags,
       savedBy[]->{
         _id
       },
@@ -26,8 +27,8 @@ export const getAllPosts = () => {
         _key,
         postedBy->{
         _id,
-        userName,
-        image
+        name,
+        avatar
       },
       }
     }`
@@ -37,11 +38,43 @@ export const getAllPosts = () => {
 
 export const searchPostsQuery = (searchTerm: string | string[]) => {
   const query = `[*[_type in ["post", "user"]]
-    [_type == "post" && caption match '${searchTerm}*' || category match '${searchTerm}*']{
+  [_type == "post" && tags match '${searchTerm}*'] | order(_createdAt desc){
+    _id,
+    _createdAt,
+     caption,
+      assets[]{
+        resource_type,
+        _key,
+        url,
+        width,
+        height
+      },
+      userId,
+      postedBy->{
+        _id,
+        name,
+        avatar
+      },
+    likes,
+    category,
+    tags,
+    savedBy[]->{
+      _id
+    },
+    comments[]{
+      comment,
+      _key,
+      postedBy->{
       _id,
-    } , *[_type == "user" && name match '${searchTerm}*']{
-      _id,
-    }]`
+      name,
+      avatar
+    },
+    }
+  } , *[_type == "user" && name match '${searchTerm}*']{
+    _id,
+    name,
+    avatar
+  }]`
 
   return query
 }
@@ -83,6 +116,7 @@ export const userCreatedPostsQuery = (userId: string | string[]) => {
       },
     likes,
     category,
+    tags,
     savedBy[]->{
       _id
     },
@@ -90,9 +124,9 @@ export const userCreatedPostsQuery = (userId: string | string[]) => {
       comment,
       _key,
       postedBy->{
-      _id,
-      userName,
-      image
+        _id,
+        name,
+        avatar
     },
     }
   }`
@@ -120,6 +154,7 @@ export const userSavedPostsQuery = (userId: string | string[]) => {
       },
     likes,
     category,
+    tags,
     savedBy[]->{
       _id
     },
@@ -127,9 +162,9 @@ export const userSavedPostsQuery = (userId: string | string[]) => {
       comment,
       _key,
       postedBy->{
-      _id,
-      userName,
-      image
+        _id,
+        name,
+        avatar
     },
     }
   }`
@@ -159,9 +194,9 @@ export const topicPostsQuery = (topic: string | string[]) => {
         comment,
         _key,
         postedBy->{
-        _id,
-        userName,
-        image
+          _id,
+          name,
+          avatar
       },
       }
     }`
