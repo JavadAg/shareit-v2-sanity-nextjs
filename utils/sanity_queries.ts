@@ -36,9 +36,18 @@ export const getAllPosts = () => {
   return query
 }
 
-export const searchPostsQuery = (searchTerm: string | string[]) => {
-  const query = `[*[_type in ["post", "user"]]
-  [_type == "post" && tags match '${searchTerm}*'] | order(_createdAt desc){
+export const searchUser = (searchTerm: string | string[]) => {
+  const query = `*[_type == "user" && name match '${searchTerm}*']{
+    _id,
+    name,
+    avatar
+  }`
+
+  return query
+}
+
+export const searchTag = (searchTerm: string | string[]) => {
+  const query = `*[_type == "post" && tags match '${searchTerm}*'] | order(_createdAt desc){
     _id,
     _createdAt,
      caption,
@@ -70,11 +79,7 @@ export const searchPostsQuery = (searchTerm: string | string[]) => {
       avatar
     },
     }
-  } , *[_type == "user" && name match '${searchTerm}*']{
-    _id,
-    name,
-    avatar
-  }]`
+  }`
 
   return query
 }

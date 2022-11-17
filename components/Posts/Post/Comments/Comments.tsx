@@ -13,7 +13,7 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   const { data: session, status } = useSession()
   const [comment, setComment] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-
+  
   const handleComment = async () => {
     setIsLoading(true)
     const userid = session?.user.id
@@ -21,8 +21,6 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postDetails._id}`,
       { comment, userid, type: "comment" }
     )
-
-    console.log(res.data.comments.slice(-1))
 
     //since returned data using default query (poster info not included!) we extract poster name from session
     setPostDetails({

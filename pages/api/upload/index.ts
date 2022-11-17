@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next"
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary"
-import { FilePreview } from "../../../components/Header/UploadModal/UploadModal"
+import { FilePreview } from "../../../types/upload.types"
 
 export const config = {
   api: {

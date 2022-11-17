@@ -1,16 +1,16 @@
 import React, { useState } from "react"
 import Post from "../../Posts/Post/Post"
 
-const PostModal = ({ toggleModal, setToggleModal, post }: any) => {
+const PostModal = ({ setToggleModal, post }: any) => {
   return (
     <>
       <div
         onClick={() => setToggleModal(false)}
-        className="fixed z-50 inset-0 bg-red-400/70 flex justify-center items-center w-full h-full"
+        className="fixed z-50 inset-0 bg-gray-7 backdrop-blur-md 00/70 flex justify-center items-center w-full h-full overscroll-contain"
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-5/6 h-auto  rounded-2xl "
+          className="bg-white w-5/6 max-h-full rounded-2xl block overscroll-contain overflow-y-auto"
         >
           <Post post={post} />
         </div>

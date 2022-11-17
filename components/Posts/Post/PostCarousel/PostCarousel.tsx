@@ -35,7 +35,7 @@ const PostCarousel = ({ assets }: any) => {
   return (
     <div className="relative bg-base-100 w-full h-full rounded-xl ">
       {embla?.scrollSnapList().length! > 1 && (
-        <div className=" bg-gray-800/70 justify-center items-center flex w-8 h-8 text-center rounded-full absolute top-2 z-50 right-2 text-gray-200 text-sm">
+        <div className=" bg-gray-800/70 justify-center items-center flex w-8 h-8 text-center rounded-full absolute top-2 z-10 right-2 text-gray-200 text-sm">
           {selectedIndex + 1}/{embla?.scrollSnapList().length}
         </div>
       )}
@@ -60,10 +60,15 @@ const PostCarousel = ({ assets }: any) => {
                     (max-width: 1200px) 50vw,
                     33vw"
                   src={file.url}
-                  className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain  block"
+                  className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain block"
                 />
               ) : file.resource_type === "video" ? (
-                <video src={file.asset.url} />
+                <video
+                  className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain block"
+                  controls
+                  loop
+                  src={file.url}
+                />
               ) : (
                 ""
               )}

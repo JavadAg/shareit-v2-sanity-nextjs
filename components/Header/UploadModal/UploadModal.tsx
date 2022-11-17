@@ -8,8 +8,7 @@ import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi"
 import FormPreview from "./FormSteps/FormPreview/FormPreview"
 import FormInfo from "./FormSteps/FormInfo/FormInfo"
 import FormUpload from "./FormSteps/FormUpload/FormUpload"
-import { Area, Point } from "react-easy-crop"
-import { UploadApiResponse } from "cloudinary"
+import { FilePreview, FormData, FormState } from "../../../types/upload.types"
 declare module "next-auth" {
   interface User {
     id: number
@@ -20,31 +19,12 @@ declare module "next-auth" {
   }
 }
 
-export interface FilePreview {
-  url?: string
-  id?: number
-  type?: string
-  crop?: Point
-  croppedAreaPixels?: Area
-  base64: string
-}
-
-interface FormData {
-  caption: string
-  category: string
-  tags: string[]
-}
 const formDataInitData: FormData = {
   caption: "",
   category: "",
   tags: []
 }
 
-interface FormState {
-  error: string
-  loading: boolean
-  isUploading: boolean
-}
 const formStateInitData: FormState = {
   error: "",
   loading: false,
@@ -72,32 +52,45 @@ const UploadModal = () => {
   const [filesPreview, setFilesPreview] = useState<FilePreview[]>([])
   const [currentStep, setCurrentStep] = useState(0)
 
-  const stepDisplay = () => {
-    if (currentStep === 0) {
-      return (
-        <FormPreview
-          formState={formState}
-          setFormState={setFormState}
-          formData={formData}
-          setFormData={setFormData}
-          filesPreview={filesPreview}
-          setFilesPreview={setFilesPreview}
-        />
-      )
-    } else if (currentStep === 1) {
-      return (
-        <FormInfo
-          status={status}
-          formState={formState}
-          setFormState={setFormState}
-          formData={formData}
-          setFormData={setFormData}
-          filesPreview={filesPreview}
-          setFilesPreview={setFilesPreview}
-        />
-      )
-    } else if (currentStep === 2 || formState.loading === true) {
-      return <FormUpload />
+  const steps = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <FormPreview
+            formState={formState}
+            setFormState={setFormState}
+            formData={formData}
+            setFormData={setFormData}
+            filesPreview={filesPreview}
+            setFilesPreview={setFilesPreview}
+          />
+        )
+
+      case 1:
+        return (
+          <FormInfo
+            status={status}
+            formState={formState}
+            setFormState={setFormState}
+            formData={formData}
+            setFormData={setFormData}
+            filesPreview={filesPreview}
+            setFilesPreview={setFilesPreview}
+          />
+        )
+
+      case 2:
+        return (
+          <FormUpload
+            status={status}
+            formState={formState}
+            setFormState={setFormState}
+            formData={formData}
+            setFormData={setFormData}
+            filesPreview={filesPreview}
+            setFilesPreview={setFilesPreview}
+          />
+        )
     }
   }
 
@@ -113,14 +106,14 @@ const UploadModal = () => {
       filesPreview
     )
 
-    const uploaded_files: UploadApiResponse[] = await res.data
+    const uploaded_files: any[] = await res.data
 
     setFormState({ isUploading: false })
 
     if (
       formData.caption &&
       !formState.isUploading &&
-      uploaded_files &&
+      uploaded_files.length == filesPreview.length &&
       formData.category
     ) {
       const { caption, tags, category } = formData
@@ -168,6 +161,8 @@ const UploadModal = () => {
       setFilesPreview([])
       setCurrentStep(0)
       setModalToggle(false)
+    } else {
+      setFormState({ error: "something happened try again" })
     }
   }
 
@@ -197,7 +192,7 @@ const UploadModal = () => {
             <div className="flex justify-between items-center w-full">
               <button
                 type="button"
-                disabled={currentStep === 0}
+                disabled={currentStep === 0 || currentStep === 2}
                 onClick={() => setCurrentStep(currentStep - 1)}
                 className=" bg-gray-100 rounded-full top-4 left-4 text-lg p-1 disabled:opacity-0"
               >
@@ -208,7 +203,11 @@ const UploadModal = () => {
 
               <button
                 type="button"
-                disabled={filesPreview.length < 1 || currentStep === 1}
+                disabled={
+                  filesPreview.length < 1 ||
+                  currentStep === 1 ||
+                  currentStep === 2
+                }
                 onClick={() => setCurrentStep(currentStep + 1)}
                 className=" bg-gray-100 rounded-full top-4 right-4 text-lg p-1 disabled:opacity-0"
               >
@@ -251,7 +250,7 @@ const UploadModal = () => {
                 className="w-full flex justify-center items-center flex-col"
                 onSubmit={handleSubmit}
               >
-                {stepDisplay()}
+                {steps()}
               </form>
             </div>
           </div>

@@ -45,7 +45,7 @@ const SavePost: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
     <button
       disabled={isLoading}
       onClick={() => handleSavePost()}
-      className="relative group text-4xl text-gray-500 flex justify-center items-center border border-gray-200 bg-white rounded-full w-8 h-8"
+      className="relative group text-4xl text-gray-700 flex justify-center items-center border border-gray-200 bg-white rounded-full w-8 h-8"
     >
       <HiOutlineBookmarkAlt
         className={`w-5 h-5 ${

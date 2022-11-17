@@ -1,16 +1,22 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import { RiSearch2Line } from "react-icons/ri"
 import { debounce } from "lodash"
 import axios from "axios"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 const SearchModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [searchData, setSearchData] = useState<[][]>([])
+  const [searchData, setSearchData] = useState<[]>([])
+  const searchTerm = useRef<HTMLInputElement>(null)
 
   const handleDebounceFn = async (value: any) => {
     if (value) {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/search/${value}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/search/${value}`,
+        {
+          params: { type: "user" }
+        }
       )
       const data = res.data
 
@@ -22,7 +28,6 @@ const SearchModal = () => {
     debounce((e) => handleDebounceFn(e.target.value), 1000),
     []
   )
-  console.log(searchData)
   return (
     <div className="flex relative justify-center items-center rounded-full min-w-[2rem] h-8">
       <div
@@ -34,7 +39,9 @@ const SearchModal = () => {
       {isModalOpen ? (
         <div
           onClick={() => {
-            setSearchData([]), setIsModalOpen(false)
+            setSearchData([]),
+              (searchTerm.current!.value = ""),
+              setIsModalOpen(false)
           }}
           className="flex justify-start pt-44 items-center flex-col fixed inset-0 bg-gray-800 bg-opacity-90 h-screen w-screen z-50"
         >
@@ -42,22 +49,33 @@ const SearchModal = () => {
             className="flex justify-center items-center flex-col space-y-2 w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <span className="text-gray-200">Search for users</span>
+            <span className="text-gray-200">Search tag or username</span>
             <input
+              ref={searchTerm}
               type="search"
               onChange={(e) => debounceFn(e)}
               className="bg-gray-200 h-8 w-4/6 rounded-2xl outline-none border-none px-2"
             />
-            {searchData[0]?.length > 0 || searchData[1]?.length > 0 ? (
-              <div className="flex justify-center items-center bg-gray-200">
-                <div className=" flex justify-center items-center flex-col">
-                  {searchData[0].map((item: any) => (
-                    <span>{item._id}</span>
-                  ))}
+            {searchData?.length > 0 ? (
+              <div className="flex justify-between items-start bg-gray-200 w-9/12 px-2 text-sm rounded-2xl py-2">
+                <div className=" flex justify-center items-start flex-col gap-2">
+                  <span className="font-bold text-black">Tags</span>
+                  <Link
+                    href={`/search/${searchTerm.current?.value}`}
+                    className="bg-gradient-to-tr from-blue-500 to-cyan-300 p-1 rounded-xl px-2 cursor-pointer"
+                  >
+                    #{searchTerm.current?.value}
+                  </Link>
                 </div>
-                <div className=" flex justify-center items-center flex-col">
-                  {searchData[1].map((item: any) => (
-                    <span>{item._id}</span>
+                <div className=" flex justify-center items-start flex-col gap-2">
+                  <span className="font-bold text-black">Users</span>
+                  {searchData.map((item: any) => (
+                    <Link
+                      href={`/profile/${item._id}`}
+                      className="bg-gradient-to-tr from-indigo-200 to-violet-300 p-1 rounded-xl px-2 cursor-pointer"
+                    >
+                      {item.name}
+                    </Link>
                   ))}
                 </div>
               </div>
