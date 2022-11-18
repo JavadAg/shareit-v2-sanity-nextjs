@@ -18,8 +18,6 @@ const Post = ({ post }: any) => {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  const handleDropDown = () => {}
-
   return (
     <div className="flex justify-center items-center flex-col space-y-2 bg-white w-full h-full rounded-2xl p-2 border border-gray-300/50">
       <div className="flex justify-between items-center w-full">

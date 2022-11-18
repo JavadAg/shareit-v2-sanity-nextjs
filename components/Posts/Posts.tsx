@@ -1,8 +1,9 @@
 import React from "react"
+import { PostsType } from "../../types/posts.types"
 import Post from "./Post/Post"
 
 interface IProps {
-  posts: any
+  posts: PostsType[]
 }
 
 const Posts: React.FC<IProps> = ({ posts }) => {

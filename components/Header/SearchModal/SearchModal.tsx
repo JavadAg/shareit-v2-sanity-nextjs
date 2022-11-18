@@ -9,6 +9,7 @@ const SearchModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchData, setSearchData] = useState<[]>([])
   const searchTerm = useRef<HTMLInputElement>(null)
+  const router = useRouter()
 
   const handleDebounceFn = async (value: any) => {
     if (value) {
@@ -43,7 +44,7 @@ const SearchModal = () => {
               (searchTerm.current!.value = ""),
               setIsModalOpen(false)
           }}
-          className="flex justify-start pt-44 items-center flex-col fixed inset-0 bg-gray-800 bg-opacity-90 h-screen w-screen z-50"
+          className="flex justify-start pt-44 items-center flex-col fixed inset-0 backdrop-blur-md bg-gray-800 bg-opacity-90 h-screen w-screen z-50"
         >
           <div
             className="flex justify-center items-center flex-col space-y-2 w-full"
@@ -60,22 +61,32 @@ const SearchModal = () => {
               <div className="flex justify-between items-start bg-gray-200 w-9/12 px-2 text-sm rounded-2xl py-2">
                 <div className=" flex justify-center items-start flex-col gap-2">
                   <span className="font-bold text-black">Tags</span>
-                  <Link
-                    href={`/search/${searchTerm.current?.value}`}
+                  <span
+                    onClick={() => {
+                      router.push(`/search/${searchTerm.current?.value}`)
+                      setSearchData([]),
+                        (searchTerm.current!.value = ""),
+                        setIsModalOpen(false)
+                    }}
                     className="bg-gradient-to-tr from-blue-500 to-cyan-300 p-1 rounded-xl px-2 cursor-pointer"
                   >
                     #{searchTerm.current?.value}
-                  </Link>
+                  </span>
                 </div>
                 <div className=" flex justify-center items-start flex-col gap-2">
                   <span className="font-bold text-black">Users</span>
                   {searchData.map((item: any) => (
-                    <Link
-                      href={`/profile/${item._id}`}
+                    <span
+                      onClick={() => {
+                        router.push(`/profile/${item._id}`)
+                        setSearchData([]),
+                          (searchTerm.current!.value = ""),
+                          setIsModalOpen(false)
+                      }}
                       className="bg-gradient-to-tr from-indigo-200 to-violet-300 p-1 rounded-xl px-2 cursor-pointer"
                     >
                       {item.name}
-                    </Link>
+                    </span>
                   ))}
                 </div>
               </div>

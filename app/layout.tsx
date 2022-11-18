@@ -2,7 +2,6 @@ import "../styles/globals.css"
 import { getSession } from "../lib/session"
 import { headers } from "next/headers"
 import SessionProvider from "../context/SessionProvider"
-import ThemeProvider from "../context/ThemeProvider"
 import Header from "../components/Header/Header"
 import Sidebar from "../components/Sidebar/Sidebar"
 import { Manrope } from "@next/font/google"
@@ -24,13 +23,13 @@ export default async function RootLayout({ children, props }: RootLayoutProps) {
       </head>
       <body>
         <SessionProvider session={session}>
-          <ThemeProvider defaultTheme="system">
-            <div className={`bg-gray-100 ${manrope.className} pb-16`}>
-              <Header />
-              <Sidebar />
-              {children}
-            </div>
-          </ThemeProvider>
+          <div
+            className={`bg-gray-100 dark:bg-gray-900 dark:text-white ${manrope.className} pb-16`}
+          >
+            <Header />
+            <Sidebar />
+            {children}
+          </div>
         </SessionProvider>
       </body>
     </html>

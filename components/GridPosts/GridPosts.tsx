@@ -5,6 +5,7 @@ import Image from "next/image"
 import PostModal from "./PostModal/PostModal"
 import { Tab } from "@headlessui/react"
 import { categories } from "../../utils/constants"
+import Category from "./Category/Category"
 
 const GridPosts = ({ posts }: any) => {
   const [toggleModal, setToggleModal] = useState(false)
@@ -13,21 +14,7 @@ const GridPosts = ({ posts }: any) => {
   return (
     <>
       <Tab.Group>
-        <Tab.List className="flex justify-start items-center space-x-1 mt-2 overflow-x-scroll rounded-xl bg-white p-2 w-full gap-1">
-          <Tab
-            className={`rounded-lg py-2 px-2 text-sm font-medium leading-5 text-indigo-700 outline-none ui-selected:bg-gradient-to-br from-indigo-300 to-violet-300 ui-selected:text-white border border-gray-200 ui-not-selected:text-gray-400 ui-not-selected:hover:bg-white/[0.12] ui-not-selected:hover:text-white transition-all duration-300`}
-          >
-            All
-          </Tab>
-          {categories.map((category) => (
-            <Tab
-              key={category}
-              className={`rounded-lg py-2 px-2 text-sm font-medium leading-5 text-indigo-700 outline-none ui-selected:bg-gradient-to-br from-indigo-300 to-violet-300 ui-selected:text-white border border-gray-200 ui-not-selected:text-gray-400 ui-not-selected:hover:bg-white/[0.12] ui-not-selected:hover:text-white transition-all duration-300`}
-            >
-              {category}
-            </Tab>
-          ))}
-        </Tab.List>
+        <Category />
         <Tab.Panels className="mt-2">
           <Tab.Panel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2">
             {posts.length > 0 ? (

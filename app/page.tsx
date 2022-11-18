@@ -1,4 +1,5 @@
 import axios from "axios"
+import { PostsType } from "../types/posts.types"
 import HomePage from "./HomePage"
 
 async function getPosts() {
@@ -9,6 +10,6 @@ async function getPosts() {
 }
 
 export default async function Page() {
-  const posts = await getPosts()
+  const posts: PostsType[] = await getPosts()
   return <HomePage posts={posts} />
 }

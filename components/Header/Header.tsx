@@ -4,13 +4,11 @@ import Link from "next/link"
 import React from "react"
 import { signIn, useSession, signOut } from "next-auth/react"
 import UploadModal from "./UploadModal/UploadModal"
-import { useTheme } from "next-themes"
 import SearchModal from "./SearchModal/SearchModal"
 import MobileNavbar from "./MobileNavbar/MobileNavbar"
 
 const Header = () => {
   const { data: session, status } = useSession()
-  const { theme, setTheme } = useTheme()
 
   return (
     <div className="flex relative justify-between px-4 h-16 items-center bg-white rounded-b-3xl ">
@@ -33,15 +31,6 @@ const Header = () => {
             Sign in
           </button>
         )}
-
-        <div className="inline-block w-10">
-          <input
-            type="checkbox"
-            onChange={() => {
-              theme === "dark" ? setTheme("light") : setTheme("dark")
-            }}
-          />
-        </div>
       </div>
       <MobileNavbar />
     </div>

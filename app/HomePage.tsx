@@ -1,8 +1,9 @@
 import type { NextPage } from "next"
 import Posts from "../components/Posts/Posts"
+import { PostsType } from "../types/posts.types"
 
 interface IProps {
-  posts: any
+  posts: PostsType[]
 }
 
 const HomePage: NextPage<IProps> = ({ posts }) => {

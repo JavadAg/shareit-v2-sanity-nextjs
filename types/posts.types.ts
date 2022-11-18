@@ -44,7 +44,7 @@ export interface User {
   _id: string
 }
 
-export interface Posts {
+export interface PostsType {
   assets: Assets[]
   caption: string
   category: string
@@ -74,6 +74,6 @@ export interface SavedPosts {
 
 export interface UserData {
   user: User
-  userPosts: Posts[]
+  userPosts: PostsType[]
   userSavedPosts: SavedPosts[]
 }
