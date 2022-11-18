@@ -37,7 +37,7 @@ const MobileNavbar = () => {
     <>
       <div className="fixed left-0 right-0 bottom-2 bg-white border border-gray-100 shadow-sm flex justify-center items-center h-12 z-50 w-full rounded-full">
         <>
-          <ul className="relative flex justify-evenly items-center space-x-2 text-sm font-bold text-gray-700 w-full">
+          <ul className="relative flex justify-evenly items-center gap-2 text-sm font-bold text-gray-700 w-full">
             {links.map((link, index) => (
               <li
                 key={index}

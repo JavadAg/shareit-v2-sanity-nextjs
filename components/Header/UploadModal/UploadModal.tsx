@@ -174,7 +174,7 @@ const UploadModal = () => {
     <>
       <button
         onClick={() => setModalToggle(true)}
-        className="flex justify-center items-center text-2xl text-gray-700"
+        className="flex justify-center items-center text-2xl text-gray-700 w-12 h-12"
       >
         <RiAddCircleLine />
       </button>

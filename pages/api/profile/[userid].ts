@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { randomUUID } from "crypto"
 import type { NextApiRequest, NextApiResponse } from "next"
 import { client } from "../../../utils/client"
 import {
@@ -29,17 +30,82 @@ export default async function handler(
       console.log("error", error)
     }
   } else if (req.method === "PUT") {
-    try {
-      const { userid } = req.query
-      const { description } = req.body
-      const data = await client
-        .patch(userid as string)
-        .set({ description: description })
-        .commit()
+    switch (req.body.type) {
+      case "edit":
+        try {
+          const { userid } = req.query
+          const { description } = req.body.description
 
-      res.status(200).json(data)
-    } catch (error) {
-      console.log(error)
+          const data = await client
+            .patch(userid as string)
+            .set({ description: description })
+            .commit()
+
+          res.status(200).json(data)
+        } catch (error) {
+          console.log(error)
+        }
+        break
+
+      case "follow":
+        try {
+          const { myId } = req.body
+          const { userid } = req.query
+
+          const targetPatch = client
+            .patch(userid as string)
+            .insert("after", "followers[-1]", [
+              {
+                _key: randomUUID(),
+                _ref: myId
+              }
+            ])
+
+          const myPatch = client
+            .patch(myId as string)
+            .insert("after", "following[-1]", [
+              {
+                _key: randomUUID(),
+                _ref: userid
+              }
+            ])
+
+          const data = await client
+            .transaction()
+            .patch(targetPatch)
+            .patch(myPatch)
+            .commit()
+
+          res.status(200).json(data)
+        } catch (error) {
+          console.log("error", error)
+        }
+        break
+
+      case "unfollow":
+        try {
+          const { myId } = req.body
+          const { userid } = req.query
+
+          const targetPatch = client
+            .patch(userid as string)
+            .unset([`followers[_ref=="${myId}"]`])
+
+          const myPatch = client
+            .patch(myId as string)
+            .unset([`following[_ref=="${userid}"]`])
+
+          const data = await client
+            .transaction()
+            .patch(targetPatch)
+            .patch(myPatch)
+            .commit()
+
+          res.status(200).json(data)
+        } catch (error) {
+          console.log("error", error)
+        }
+        break
     }
   }
 }
