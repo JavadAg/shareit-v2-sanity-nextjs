@@ -14,7 +14,6 @@ const Follow: React.FC<IProps> = ({ userData, setUserData }) => {
   const filterUser = userData.user.followers.filter(
     (obj) => obj._id === (session?.user.id as unknown as string)
   )
-  console.log(userData)
 
   const handleUnfollow = async () => {
     const res = await axios.put(

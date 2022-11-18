@@ -166,10 +166,6 @@ const UploadModal = () => {
     }
   }
 
-  const handleNextButton = async () => {
-    //crop and resize image
-  }
-
   return (
     <>
       <button

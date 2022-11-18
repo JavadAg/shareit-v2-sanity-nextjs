@@ -38,7 +38,7 @@ const Post = ({ post }: any) => {
             />
           </div>
           <div className="flex justify-center items-start flex-col text-sm text-start">
-            <span className="capitalize text-sm font-bold">
+            <span className="capitalize text-sm font-bold break-all">
               {post.postedBy.name}
             </span>
             <span className="text-xs text-gray-500">
