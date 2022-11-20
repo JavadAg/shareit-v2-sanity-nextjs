@@ -12,10 +12,10 @@ export default async function handler(
       try {
         const { comment, userid } = req.body
 
-        const { id }: any = req.query
+        const { id } = req.query
 
         const data = await client
-          .patch(id)
+          .patch(id as string)
           .setIfMissing({ comments: [] })
           .insert("after", "comments[-1]", [
             {

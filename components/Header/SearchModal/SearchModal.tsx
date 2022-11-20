@@ -3,15 +3,15 @@ import { RiSearch2Line } from "react-icons/ri"
 import { debounce } from "lodash"
 import axios from "axios"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
+import { User } from "../../../types/posts.types"
 
 const SearchModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [searchData, setSearchData] = useState<[]>([])
+  const [searchData, setSearchData] = useState<User[]>([])
   const searchTerm = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
-  const handleDebounceFn = async (value: any) => {
+  const handleDebounceFn = async (value: string) => {
     if (value) {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/search/${value}`,
@@ -26,7 +26,11 @@ const SearchModal = () => {
   }
 
   const debounceFn = useCallback(
-    debounce((e) => handleDebounceFn(e.target.value), 1000),
+    debounce(
+      (e: React.ChangeEvent<HTMLInputElement>) =>
+        handleDebounceFn(e.target.value),
+      1000
+    ),
     []
   )
   return (
@@ -75,7 +79,7 @@ const SearchModal = () => {
                 </div>
                 <div className=" flex justify-center items-start flex-col gap-2">
                   <span className="font-bold text-black">Users</span>
-                  {searchData.map((item: any) => (
+                  {searchData.map((item) => (
                     <span
                       onClick={() => {
                         router.push(`/profile/${item._id}`)

@@ -1,9 +1,10 @@
 import React from "react"
 import { NextPage } from "next"
 import GridPosts from "../../components/GridPosts/GridPosts"
+import { PostsType } from "../../types/posts.types"
 
 interface IProps {
-  posts: any
+  posts: PostsType[]
 }
 
 const DiscoverPage: NextPage<IProps> = ({ posts }) => {

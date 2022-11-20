@@ -56,7 +56,7 @@ const Header = () => {
         ) : (
           <div
             onClick={() => signIn()}
-            className="flex w-8 h-8 bg-gray-100 relative justify-center items-center rounded-full z-40 cursor-pointer hover:bg-gray-200 duration-200"
+            className="flex w-8 h-8 bg-gray-100 relative justify-center items-center rounded-full z-40 cursor-pointer hover:bg-gray-200 duration-200 md:w-9 md:h-9 md:text-xl"
           >
             <RiLoginCircleLine />
           </div>

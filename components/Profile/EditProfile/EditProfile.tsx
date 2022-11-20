@@ -33,10 +33,6 @@ const EditProfile: React.FC<IProps> = ({ userData }) => {
 
   return (
     <>
-      <span className="font-bold capitalize">{userData.user.name}</span>
-      <span className="text-gray-600 break-all">
-        {userData.user.description}
-      </span>
       <Disclosure>
         <Disclosure.Button className="bg-gradient-to-br transition-all ease-in-out duration-300 from-indigo-400 to-indigo-500 border border-indigo-200/50 py-1 hover:from-indigo-500 hover:to-indigo-600 text-sm rounded-2xl px-2 font-bold flex items-center gap-1 text-white">
           Edit Profile <RiEditBoxFill className="text-base" />

@@ -1,17 +1,28 @@
 import React, { useState, useEffect, useCallback } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { NextButton, PrevButton } from "./PreviewCarouselButtons"
-import Cropper from "react-easy-crop"
+import Cropper, { Area, Point } from "react-easy-crop"
 import { FilePreview } from "../../../../../../types/upload.types"
 
-const PreviewCarousel = ({
+interface IProps {
+  filesPreview: FilePreview[]
+  zoom: number
+  setZoom: React.Dispatch<React.SetStateAction<number>>
+  onCropComplete: (
+    file: FilePreview
+  ) => (croppedArea: Area, croppedAreaPixels: Area) => Promise<void>
+  onCropChange: (file: FilePreview) => (location: Point) => Promise<void>
+  aspect: number | undefined
+}
+
+const PreviewCarousel: React.FC<IProps> = ({
   filesPreview,
   zoom,
   setZoom,
   onCropComplete,
   onCropChange,
   aspect
-}: any) => {
+}) => {
   const [viewportRef, embla] = useEmblaCarousel({
     skipSnaps: false,
     draggable: false

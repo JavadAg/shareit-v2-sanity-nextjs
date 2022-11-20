@@ -4,6 +4,7 @@ import Header from "../components/Header/Header"
 import { Manrope } from "@next/font/google"
 import { unstable_getServerSession } from "next-auth"
 import { authOptions } from "../pages/api/auth/[...nextauth]"
+import { ServerThemeProvider } from "@wits/next-themes"
 
 interface RootLayoutProps {
   children: React.ReactNode

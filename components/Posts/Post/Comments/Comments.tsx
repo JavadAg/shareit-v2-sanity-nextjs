@@ -3,10 +3,11 @@ import React, { useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { Disclosure, Transition } from "@headlessui/react"
+import { PostsType } from "../../../../types/posts.types"
 
 interface IProps {
-  postDetails: any
-  setPostDetails: any
+  postDetails: PostsType
+  setPostDetails: React.Dispatch<React.SetStateAction<PostsType>>
 }
 
 const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
@@ -29,7 +30,11 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
         ...postDetails.comments,
         {
           comment: res.data.comments.slice(-1)[0].comment,
-          postedBy: { name: session?.user.name },
+          postedBy: {
+            name: session?.user.name!,
+            avatar: session?.user.image!,
+            _id: session?.user.id! as unknown as string
+          },
           _key: res.data.comments.slice(-1)[0]._key
         }
       ]
@@ -71,7 +76,7 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
       </div>
       <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-gray-500 w-full space-y-4">
         {postDetails.comments.length > 0 ? (
-          postDetails.comments.map((obj: any, index: number) => (
+          postDetails.comments.map((obj, index) => (
             <div
               key={index}
               className="flex justify-center items-start flex-col w-full"

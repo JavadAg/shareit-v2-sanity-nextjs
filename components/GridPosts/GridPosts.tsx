@@ -8,10 +8,15 @@ import { categories } from "../../utils/constants"
 import Category from "./Category/Category"
 import { usePathname } from "next/navigation"
 import { RiChat1Fill, RiHeartFill } from "react-icons/ri"
+import { PostsType } from "../../types/posts.types"
 
-const GridPosts = ({ posts }: any) => {
+interface IProps {
+  posts: PostsType[]
+}
+
+const GridPosts: React.FC<IProps> = ({ posts }) => {
   const [toggleModal, setToggleModal] = useState(false)
-  const [modalPost, setModalPost] = useState()
+  const [modalPost, setModalPost] = useState<PostsType>()
   const pathname = usePathname()
 
   return (
@@ -21,7 +26,7 @@ const GridPosts = ({ posts }: any) => {
         <Tab.Panel className="rounded-2xl bg-white focus:outline-none border border-gray-300/50">
           {posts.length > 0 ? (
             <div className="grid grid-cols-[repeat(auto-fill,_minmax(45%,_1fr))] auto-rows-[50px] gap-2 p-2 lg:grid-cols-[repeat(auto-fill,_minmax(32%,_1fr))]">
-              {posts.map((post: any) => (
+              {posts.map((post) => (
                 <React.Fragment key={post._id}>
                   <div
                     className={`flex relative justify-center items-center group ${
@@ -92,8 +97,8 @@ const GridPosts = ({ posts }: any) => {
             {posts.length > 0 ? (
               <div className="grid grid-cols-[repeat(auto-fill,_minmax(45%,_1fr))] auto-rows-[50px] gap-2 p-2 lg:grid-cols-[repeat(auto-fill,_minmax(32%,_1fr))]">
                 {posts
-                  .filter((post: any) => post.category === category)
-                  .map((post: any) => (
+                  .filter((post) => post.category === category)
+                  .map((post) => (
                     <React.Fragment key={post._id}>
                       <div
                         className={`flex relative justify-center items-center group ${

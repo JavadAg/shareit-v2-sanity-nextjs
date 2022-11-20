@@ -12,8 +12,13 @@ import SavePost from "./SavePost/SavePost"
 import { Disclosure } from "@headlessui/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { PostsType } from "../../../types/posts.types"
 
-const Post = ({ post }: any) => {
+interface IProps {
+  post: PostsType
+}
+
+const Post: React.FC<IProps> = ({ post }) => {
   const [postDetails, setPostDetails] = useState(post)
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -56,7 +61,10 @@ const Post = ({ post }: any) => {
         <div className="flex justify-between items-center bg-gray-100 h-10 rounded-2xl w-full px-1 ">
           <div className="flex justify-center items-center space-x-1">
             <Likes postDetails={postDetails} setPostDetails={setPostDetails} />
-            <Disclosure.Button className="relative space-x-1 px-1 text-4xl border border-gray-200 text-gray-700 flex justify-center items-center bg-white rounded-full h-8">
+            <Disclosure.Button
+              disabled={status === "unauthenticated"}
+              className="relative space-x-1 px-1 text-4xl border border-gray-200 text-gray-700 flex justify-center items-center bg-white rounded-full h-8 disabled:cursor-not-allowed disabled:opacity-40"
+            >
               <HiOutlineAnnotation className="w-5 h-5 md:w-6 md:h-6" />
               {postDetails.comments?.length > 0 && (
                 <span className="text-sm text-gray-800 md:text-base">

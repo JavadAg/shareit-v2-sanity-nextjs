@@ -1,4 +1,4 @@
-interface Assets {
+export interface Assets {
   width: number
   height: number
   resource_type: string

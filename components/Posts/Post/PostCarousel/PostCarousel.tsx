@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import Image from "next/image"
+import { Assets } from "../../../../types/posts.types"
 
-const PostCarousel = ({ assets }: any) => {
+interface IProps {
+  assets: Assets[]
+}
+
+const PostCarousel: React.FC<IProps> = ({ assets }) => {
   const [viewportRef, embla] = useEmblaCarousel({ skipSnaps: false })
 
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [scrollProgress, setScrollProgress] = useState(0)
 
   const scrollTo = useCallback(
-    (index: any) => embla && embla.scrollTo(index),
+    (index: number) => embla && embla.scrollTo(index),
     [embla]
   )
 
@@ -45,7 +50,7 @@ const PostCarousel = ({ assets }: any) => {
         ref={viewportRef}
       >
         <div className="flex justify-center select-none w-full h-full">
-          {assets.map((file: any, index: number) => (
+          {assets.map((file, index) => (
             <div
               className="relative object-cover w-full max-w-md flex justify-center overflow-hidden"
               key={index}

@@ -3,7 +3,7 @@ import { MdDeleteForever } from "react-icons/md"
 import UploadSVG from "../../../../../assets/UploadSVG"
 import { imageTypes, videoTypes } from "../../../../../utils/constants"
 import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
-import { Point } from "react-easy-crop"
+import { Area, Point } from "react-easy-crop"
 import { toBase64 } from "../../../../../utils/toBase64"
 import { FilePreview } from "../../../../../types/upload.types"
 
@@ -44,8 +44,8 @@ const FormPreview: React.FC<IProps> = ({
   const [aspect, setAspect] = useState<number | undefined>(1 / 1)
   const [zoom, setZoom] = useState(1)
 
-  const onCropComplete = (file: any) =>
-    useCallback(async (croppedArea: any, croppedAreaPixels: any) => {
+  const onCropComplete = (file: FilePreview) =>
+    useCallback(async (croppedArea: Area, croppedAreaPixels: Area) => {
       setFilesPreview((current) =>
         current?.map((obj: FilePreview) => {
           if (obj.id === file.id) {
@@ -68,7 +68,7 @@ const FormPreview: React.FC<IProps> = ({
       )
     }, [])
 
-  function handleToggleAspectClick(aspectRatio: any) {
+  function handleToggleAspectClick(aspectRatio: string) {
     const as = aspectRatio.split("/")
 
     if (filesPreview) {
@@ -163,7 +163,7 @@ const FormPreview: React.FC<IProps> = ({
               onChange={(e) => handleToggleAspectClick(e.target.value)}
               name=""
               id=""
-              className="bg-gray-100 rounded-2xl p-2"
+              className="bg-gray-100 rounded-2xl outline-none py-1 px-2"
             >
               <option value="1/1">1/1</option>
               <option value="4/5">4/5</option>

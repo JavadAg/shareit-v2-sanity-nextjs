@@ -1,7 +1,13 @@
 import React, { useState } from "react"
+import { PostsType } from "../../../types/posts.types"
 import Post from "../../Posts/Post/Post"
 
-const PostModal = ({ setToggleModal, post }: any) => {
+interface IProps {
+  setToggleModal: React.Dispatch<React.SetStateAction<boolean>>
+  post: PostsType | undefined
+}
+
+const PostModal: React.FC<IProps> = ({ setToggleModal, post }) => {
   return (
     <>
       <div
@@ -12,7 +18,7 @@ const PostModal = ({ setToggleModal, post }: any) => {
           onClick={(e) => e.stopPropagation()}
           className="bg-white w-5/6 max-h-full rounded-2xl block overscroll-contain overflow-y-auto max-w-xl mr-auto ml-auto"
         >
-          <Post post={post} />
+          <Post post={post!} />
         </div>
       </div>
     </>

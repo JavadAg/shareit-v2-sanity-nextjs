@@ -13,9 +13,13 @@ import { Tab } from "@headlessui/react"
 import { useSession } from "next-auth/react"
 import EditProfile from "./EditProfile/EditProfile"
 import Follow from "./Follow/Follow"
-import { UserData } from "../../types/posts.types"
+import { User, UserData } from "../../types/posts.types"
 
-const Profile = ({ user }: any) => {
+interface IProps {
+  user: UserData
+}
+
+const Profile: React.FC<IProps> = ({ user }) => {
   const { data: session, status } = useSession()
   const [userData, setUserData] = useState<UserData>(user)
 
@@ -44,11 +48,16 @@ const Profile = ({ user }: any) => {
         </div>
       </div>
       <div className="flex justify-center items-center flex-col text-sm gap-4 border-t border-gray-200 pt-2 w-full text-center">
-        {status === "authenticated" &&
-        (session?.user.id as unknown as string) == userData.user._id ? (
+        <span className="font-bold capitalize">{userData.user.name}</span>
+        <span className="text-gray-600 break-all">
+          {userData.user.description}
+        </span>
+        {(session?.user.id as unknown as string) == userData.user._id ? (
           <EditProfile userData={userData} />
-        ) : (
+        ) : status === "authenticated" ? (
           <Follow userData={userData} setUserData={setUserData} />
+        ) : (
+          ""
         )}
       </div>
 

@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react"
 import { HiOutlineHeart, HiHeart } from "react-icons/hi"
 import { useSession } from "next-auth/react"
 import { stat } from "fs"
+import { PostsType } from "../../../../types/posts.types"
 
 interface IProps {
-  postDetails: any
-  setPostDetails: any
+  postDetails: PostsType
+  setPostDetails: React.Dispatch<React.SetStateAction<PostsType>>
 }
 
 const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
@@ -30,11 +31,11 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   }
 
   let filterLikes = postDetails.likes?.filter(
-    (item: any) => item._ref === session?.user.id
+    (item) => item._ref === (session?.user.id as unknown as string)
   )
 
   useEffect(() => {
-    if (filterLikes?.length > 0) {
+    if (filterLikes?.length > 0 && status === "authenticated") {
       setLiked(true)
     } else {
       setLiked(false)
@@ -42,11 +43,17 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   }, [filterLikes])
 
   return (
-    <div className="relative space-x-1 group px-1 text-center border border-gray-200 text-red-500 flex justify-center items-center bg-white rounded-full min-w-[32px] h-8">
+    <div
+      className={`relative space-x-1 group px-1 text-center border border-gray-200 text-red-500 flex justify-center items-center bg-white rounded-full min-w-[32px] h-8 ${
+        status === "unauthenticated"
+          ? "cursor-not-allowed opacity-40"
+          : "opacity-100 cursor-pointer"
+      }`}
+    >
       <button
-        disabled={isLoading}
+        disabled={isLoading || status === "unauthenticated"}
         onClick={() => handleLike()}
-        className="relative group text-center flex justify-center items-center"
+        className="relative group text-center flex justify-center items-center disabled:cursor-not-allowed disabled:opacity-40"
       >
         <HiHeart
           className={`absolute w-5 h-5 transition-all duration-1000 ease-out transform overflow-hidden text-red-500 ${

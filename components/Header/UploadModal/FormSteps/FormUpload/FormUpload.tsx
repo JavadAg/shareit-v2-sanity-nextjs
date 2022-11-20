@@ -1,8 +1,11 @@
-import { fromPairs } from "lodash"
 import React from "react"
-import { formSteps } from "../../../../../utils/constants"
+import { FormState } from "../../../../../types/upload.types"
 
-const FormUpload = ({ formState }: any) => {
+interface IProps {
+  formState: FormState
+}
+
+const FormUpload: React.FC<IProps> = ({ formState }) => {
   return (
     <div className="flex justify-center items-center flex-col">
       {formState.error.length > 0 ? (
