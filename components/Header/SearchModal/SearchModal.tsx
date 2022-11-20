@@ -81,6 +81,7 @@ const SearchModal = () => {
                   <span className="font-bold text-black">Users</span>
                   {searchData.map((item) => (
                     <span
+                      key={item._id}
                       onClick={() => {
                         router.push(`/profile/${item._id}`)
                         setSearchData([]),

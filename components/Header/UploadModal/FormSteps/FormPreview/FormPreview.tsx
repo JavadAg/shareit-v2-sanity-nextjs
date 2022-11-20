@@ -44,7 +44,7 @@ const FormPreview: React.FC<IProps> = ({
   const [aspect, setAspect] = useState<number | undefined>(1 / 1)
   const [zoom, setZoom] = useState(1)
 
-  const onCropComplete = (file: FilePreview) =>
+  const CropComplete = (file: FilePreview) =>
     useCallback(async (croppedArea: Area, croppedAreaPixels: Area) => {
       setFilesPreview((current) =>
         current?.map((obj: FilePreview) => {
@@ -56,7 +56,7 @@ const FormPreview: React.FC<IProps> = ({
       )
     }, [])
 
-  const onCropChange = (file: FilePreview) =>
+  const CropChange = (file: FilePreview) =>
     useCallback(async (location: Point) => {
       setFilesPreview((current) =>
         current?.map((obj: FilePreview) => {
@@ -153,8 +153,8 @@ const FormPreview: React.FC<IProps> = ({
             zoom={zoom}
             aspect={aspect}
             setZoom={setZoom}
-            onCropComplete={onCropComplete}
-            onCropChange={onCropChange}
+            onCropComplete={CropComplete}
+            onCropChange={CropChange}
             filesPreview={filesPreview}
           />
 

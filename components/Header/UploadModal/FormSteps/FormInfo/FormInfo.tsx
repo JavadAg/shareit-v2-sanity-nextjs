@@ -32,8 +32,11 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
           />
           {formData.tags.length > 0 && (
             <div className="flex w-full justify-center items-center overflow-x-scroll gap-1 py-2">
-              {formData.tags.map((tag) => (
-                <div className=" bg-gray-100 rounded-lg border border-gray-200 shadow-sm p-1 flex justify-center items-center space-x-2 text-center">
+              {formData.tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-100 rounded-lg border border-gray-200 shadow-sm p-1 flex justify-center items-center space-x-2 text-center"
+                >
                   <span className="text-gray-500">#{tag}</span>
                   <button
                     className=""

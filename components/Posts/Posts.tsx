@@ -8,7 +8,7 @@ interface IProps {
 
 const Posts: React.FC<IProps> = ({ posts }) => {
   return (
-    <div className="flex justify-center items-center flex-col flex-1 space-y-6 w-full mt-4 max-w-lg">
+    <div className="flex justify-start items-center flex-col flex-1 space-y-6 w-full mt-4 max-w-lg">
       {posts.length > 0 ? (
         posts.map((post) => <Post key={post._id} post={post} />)
       ) : (

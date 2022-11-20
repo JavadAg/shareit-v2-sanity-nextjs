@@ -49,10 +49,10 @@ const PostCarousel: React.FC<IProps> = ({ assets }) => {
         className="overflow-hidden w-full h-full cursor-pointer"
         ref={viewportRef}
       >
-        <div className="flex justify-center select-none w-full h-full">
+        <div className="flex select-none w-full h-full">
           {assets.map((file, index) => (
             <div
-              className="relative object-cover w-full max-w-md flex justify-center overflow-hidden"
+              className="relative object-cover w-full min-w-full h-full flex justify-center overflow-hidden"
               key={index}
             >
               {file.resource_type === "image" ? (
@@ -67,7 +67,7 @@ const PostCarousel: React.FC<IProps> = ({ assets }) => {
                 />
               ) : file.resource_type === "video" ? (
                 <video
-                  className="rounded-2xl w-auto h-auto max-w-full max-h-full object-contain block"
+                  className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain block"
                   controls
                   loop
                   src={file.url}

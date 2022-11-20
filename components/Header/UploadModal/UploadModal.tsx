@@ -8,7 +8,7 @@ import FormPreview from "./FormSteps/FormPreview/FormPreview"
 import FormInfo from "./FormSteps/FormInfo/FormInfo"
 import FormUpload from "./FormSteps/FormUpload/FormUpload"
 import { FilePreview, FormData, FormState } from "../../../types/upload.types"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import FormProgress from "./FormProgress/FormProgress"
 declare module "next-auth" {
   interface User {
@@ -34,6 +34,7 @@ const formStateInitData: FormState = {
 
 const UploadModal = () => {
   const router = useRouter()
+  const path = usePathname()
   const [formData, setFormData] = useReducer(
     (formData: FormData, setFormData: Partial<FormData>) => ({
       ...formData,
@@ -72,17 +73,7 @@ const UploadModal = () => {
         return <FormInfo formData={formData} setFormData={setFormData} />
 
       case 2:
-        return (
-          <FormUpload
-            status={status}
-            formState={formState}
-            setFormState={setFormState}
-            formData={formData}
-            setFormData={setFormData}
-            filesPreview={filesPreview}
-            setFilesPreview={setFilesPreview}
-          />
-        )
+        return <FormUpload formState={formState} />
     }
   }
 
@@ -153,7 +144,11 @@ const UploadModal = () => {
       setFilesPreview([])
       setCurrentStep(0)
       setModalToggle(false)
-      router.push("/")
+      if (path === "/") {
+        router.refresh()
+      } else {
+        router.push("/")
+      }
     } else {
       setFormState({ error: "something happened try again" })
     }

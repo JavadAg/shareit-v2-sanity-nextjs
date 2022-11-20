@@ -103,10 +103,10 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
                       <div
                         className={`flex relative justify-center items-center group ${
                           post.assets[0].width === post.assets[0].height
-                            ? "row-span-6"
+                            ? "row-span-3 sm:row-span-4 md:row-span-5"
                             : post.assets[0].width > post.assets[0].height
-                            ? "row-span-2"
-                            : "row-span-10"
+                            ? "row-span-2 sm:row-span-3 md:row-span-4"
+                            : "row-span-5 sm:row-span-6 md:row-span-6"
                         }`}
                       >
                         <button
