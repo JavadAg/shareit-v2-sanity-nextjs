@@ -8,18 +8,22 @@ import MobileNavbar from "./Navbar/Navbar"
 import { Menu } from "@headlessui/react"
 import { RiLoginCircleLine, RiArrowDropDownFill } from "react-icons/ri"
 import Image from "next/image"
+import ThemeSwitch from "./ThemeSwitch/ThemeSwitch"
 
 const Header = () => {
   const { data: session, status } = useSession()
 
   return (
     <div className="flex relative justify-between px-4 h-16 items-center bg-white rounded-b-3xl">
-      <Link className="lg:flex-1 lg:mr-auto lg:flex" href="/">
-        <span className="font-black text-base italic md:text-lg">Share</span>
-        <span className="font-black text-base italic text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-indigo-600 pr-1 md:text-lg">
-          It
-        </span>
-      </Link>
+      <div className="flex justify-start items-center gap-2 lg:flex-1 lg:mr-auto lg:flex">
+        <Link href="/">
+          <span className="font-black text-base italic md:text-lg">Share</span>
+          <span className="font-black text-base italic text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-indigo-600 pr-1 md:text-lg">
+            It
+          </span>
+        </Link>
+        {/* <ThemeSwitch /> */}
+      </div>
       <MobileNavbar />
       <div className="flex justify-end items-center gap-2 lg:flex-1 lg:ml-auto">
         {status === "authenticated" ? (
