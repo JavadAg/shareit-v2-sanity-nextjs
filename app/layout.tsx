@@ -1,10 +1,9 @@
 import "../styles/globals.css"
-import { getSession } from "../lib/session"
-import { headers } from "next/headers"
 import SessionProvider from "../context/SessionProvider"
 import Header from "../components/Header/Header"
-import Sidebar from "../components/Sidebar/Sidebar"
 import { Manrope } from "@next/font/google"
+import { unstable_getServerSession } from "next-auth"
+import { authOptions } from "../pages/api/auth/[...nextauth]"
 
 interface RootLayoutProps {
   children: React.ReactNode
@@ -14,7 +13,7 @@ interface RootLayoutProps {
 const manrope = Manrope({ subsets: ["latin"] })
 
 export default async function RootLayout({ children, props }: RootLayoutProps) {
-  const session = await getSession(headers().get("cookie") ?? "")
+  const session = await unstable_getServerSession(authOptions)
 
   return (
     <html>
@@ -24,10 +23,9 @@ export default async function RootLayout({ children, props }: RootLayoutProps) {
       <body>
         <SessionProvider session={session}>
           <div
-            className={`bg-gray-100 dark:bg-gray-900 dark:text-white ${manrope.className} pb-16`}
+            className={`bg-neutral-50 dark:bg-gray-900 dark:text-white ${manrope.className} pb-16`}
           >
             <Header />
-            <Sidebar />
             {children}
           </div>
         </SessionProvider>

@@ -3,9 +3,9 @@ import { MdDeleteForever } from "react-icons/md"
 import UploadSVG from "../../../../../assets/UploadSVG"
 import { imageTypes, videoTypes } from "../../../../../utils/constants"
 import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
-import { FilePreview } from "../../UploadModal"
 import { Point } from "react-easy-crop"
 import { toBase64 } from "../../../../../utils/toBase64"
+import { FilePreview } from "../../../../../types/upload.types"
 
 interface FormData {
   caption: string
@@ -127,22 +127,20 @@ const FormPreview: React.FC<IProps> = ({
   return (
     <>
       {filesPreview.length < 1 ? (
-        <label className="border-dashed space-y-4 border-gray-400 bg-gray-100 hover:bg-gray-200 rounded-2xl border-4 p-5 flex flex-col justify-center items-center outline-none cursor-pointer m-4">
+        <label className="border-dashed space-y-4 border-gray-400 bg-gray-100 hover:bg-gray-200 rounded-2xl border-4 flex flex-col justify-center items-center outline-none cursor-pointer w-full py-2 md:py-6">
           <UploadSVG />
-          <span className="text-center text-sm leading-10">
-            Jpg, Png ,Webp, Mp4 <br />
-            Max 5 file <br />
-            1 video per post <br />
-            Less than 25 MB
-          </span>
-          <div className="w-full max-w-xs">
-            <input
-              type="file"
-              multiple
-              onChange={(e) => handleFiles(e)}
-              className="w-full max-w-xs"
-            />
+          <div className="text-center text-sm flex justify-center items-center flex-col text-gray-500 md:text-base gap-4 md:gap-4">
+            <span>Jpg, Png ,Webp, Mp4</span>
+            <span>Max 5 file</span>
+            <span>1 video per post</span>
+            <span>Less than 25 MB</span>
           </div>
+          <input
+            type="file"
+            multiple
+            onChange={(e) => handleFiles(e)}
+            className="hidden"
+          />
           {formState.error.length > 0 ? (
             <span className="pt-1">{formState.error}</span>
           ) : (
@@ -160,11 +158,12 @@ const FormPreview: React.FC<IProps> = ({
             filesPreview={filesPreview}
           />
 
-          <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full mx-2">
+          <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full mt-4">
             <select
               onChange={(e) => handleToggleAspectClick(e.target.value)}
               name=""
               id=""
+              className="bg-gray-100 rounded-2xl p-2"
             >
               <option value="1/1">1/1</option>
               <option value="4/5">4/5</option>

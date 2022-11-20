@@ -4,11 +4,12 @@ import { RiAddCircleLine } from "react-icons/ri"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
 import { useSession } from "next-auth/react"
-import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi"
 import FormPreview from "./FormSteps/FormPreview/FormPreview"
 import FormInfo from "./FormSteps/FormInfo/FormInfo"
 import FormUpload from "./FormSteps/FormUpload/FormUpload"
 import { FilePreview, FormData, FormState } from "../../../types/upload.types"
+import { useRouter } from "next/navigation"
+import FormProgress from "./FormProgress/FormProgress"
 declare module "next-auth" {
   interface User {
     id: number
@@ -32,6 +33,7 @@ const formStateInitData: FormState = {
 }
 
 const UploadModal = () => {
+  const router = useRouter()
   const [formData, setFormData] = useReducer(
     (formData: FormData, setFormData: Partial<FormData>) => ({
       ...formData,
@@ -67,17 +69,7 @@ const UploadModal = () => {
         )
 
       case 1:
-        return (
-          <FormInfo
-            status={status}
-            formState={formState}
-            setFormState={setFormState}
-            formData={formData}
-            setFormData={setFormData}
-            filesPreview={filesPreview}
-            setFilesPreview={setFilesPreview}
-          />
-        )
+        return <FormInfo formData={formData} setFormData={setFormData} />
 
       case 2:
         return (
@@ -161,6 +153,7 @@ const UploadModal = () => {
       setFilesPreview([])
       setCurrentStep(0)
       setModalToggle(false)
+      router.push("/")
     } else {
       setFormState({ error: "something happened try again" })
     }
@@ -170,7 +163,7 @@ const UploadModal = () => {
     <>
       <button
         onClick={() => setModalToggle(true)}
-        className="flex justify-center items-center text-2xl text-gray-700 w-12 h-12"
+        className="flex justify-center items-center text-2xl text-gray-600 hover:text-gray-900 duration-300 w-12 h-12 md:text-3xl"
       >
         <RiAddCircleLine />
       </button>
@@ -183,67 +176,17 @@ const UploadModal = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="flex relative justify-center items-center bg-white w-full mx-2 p-2 rounded-3xl flex-col space-y-4"
+            className="flex relative w-96 justify-start py-6 items-center bg-white rounded-3xl flex-col space-y-4 h-[32rem] mx-4 px-4 md:h-[36rem]"
           >
-            <div className="flex justify-between items-center w-full">
-              <button
-                type="button"
-                disabled={currentStep === 0 || currentStep === 2}
-                onClick={() => setCurrentStep(currentStep - 1)}
-                className=" bg-gray-100 rounded-full top-4 left-4 text-lg p-1 disabled:opacity-0"
-              >
-                <HiOutlineArrowSmLeft />
-              </button>
+            <FormProgress
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
+              filesPreview={filesPreview}
+            />
 
-              <h3 className="text-lg font-bold">Share with friends!</h3>
-
-              <button
-                type="button"
-                disabled={
-                  filesPreview.length < 1 ||
-                  currentStep === 1 ||
-                  currentStep === 2
-                }
-                onClick={() => setCurrentStep(currentStep + 1)}
-                className=" bg-gray-100 rounded-full top-4 right-4 text-lg p-1 disabled:opacity-0"
-              >
-                <HiOutlineArrowSmRight />
-              </button>
-            </div>
-            <div className="flex relative justify-evenly items-center w-full">
-              <div className="w-36 h-full absolute flex justify-center items-center">
-                <div
-                  className={`bg-indigo-500 h-2 block left-0 absolute ${
-                    currentStep === 0
-                      ? "w-0"
-                      : currentStep === 1
-                      ? "w-2/4"
-                      : "w-full"
-                  }`}
-                ></div>
-              </div>
-              {formSteps.map((step, index) => (
-                <>
-                  <div
-                    className={`
-                    ${
-                      index === currentStep
-                        ? "bg-indigo-400"
-                        : index < currentStep
-                        ? "bg-indigo-500"
-                        : "bg-indigo-100"
-                    } 
-                     rounded-full h-8 w-8 flex justify-center items-center relative`}
-                  >
-                    {index}
-                  </div>
-                </>
-              ))}
-            </div>
-            <span>{formSteps[currentStep]}</span>
             <div className="rounded-3xl flex justify-center items-center w-full">
               <form
-                className="w-full flex justify-center items-center flex-col"
+                className="flex justify-center items-center flex-col w-full"
                 onSubmit={handleSubmit}
               >
                 {steps()}

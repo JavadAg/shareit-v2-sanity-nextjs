@@ -10,7 +10,7 @@ const PostModal = ({ setToggleModal, post }: any) => {
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-5/6 max-h-full rounded-2xl block overscroll-contain overflow-y-auto"
+          className="bg-white w-5/6 max-h-full rounded-2xl block overscroll-contain overflow-y-auto max-w-xl mr-auto ml-auto"
         >
           <Post post={post} />
         </div>

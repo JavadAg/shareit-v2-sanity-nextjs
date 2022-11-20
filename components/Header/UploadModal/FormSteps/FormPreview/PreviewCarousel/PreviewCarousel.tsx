@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { NextButton, PrevButton } from "./PreviewCarouselButtons"
 import Cropper from "react-easy-crop"
-import { FilePreview } from "../../../UploadModal"
+import { FilePreview } from "../../../../../../types/upload.types"
 
 const PreviewCarousel = ({
   filesPreview,
@@ -57,7 +57,7 @@ const PreviewCarousel = ({
                   key={file.id}
                   className="relative bg-gray-900 flex-col flex items-center justify-center min-w-full h-full object-cover"
                 >
-                  <div className="w-full h-64 max-h-full flex justify-center items-center relative">
+                  <div className="w-full h-64 max-h-full flex justify-center items-center relative md:h-80">
                     <Cropper
                       image={file.url}
                       crop={file.crop!}
@@ -74,7 +74,7 @@ const PreviewCarousel = ({
                   key={file.id}
                   className="relative flex justify-center items-center min-w-full"
                 >
-                  <div className="w-full h-64 max-h-full flex justify-center items-center relative">
+                  <div className="w-full h-64 max-h-full flex justify-center items-center relative md:h-80">
                     <Cropper
                       video={file.url}
                       crop={file.crop!}

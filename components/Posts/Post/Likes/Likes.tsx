@@ -42,7 +42,7 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   }, [filterLikes])
 
   return (
-    <div className="relative space-x-1 group px-1 text-center border border-gray-200 text-4xl text-red-500 flex justify-center items-center bg-white rounded-full min-w-[32px] h-8">
+    <div className="relative space-x-1 group px-1 text-center border border-gray-200 text-red-500 flex justify-center items-center bg-white rounded-full min-w-[32px] h-8">
       <button
         disabled={isLoading}
         onClick={() => handleLike()}
@@ -51,12 +51,12 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
         <HiHeart
           className={`absolute w-5 h-5 transition-all duration-1000 ease-out transform overflow-hidden text-red-500 ${
             liked ? "scale-100 opacity-90" : "scale-0 opacity-0"
-          } origin-bottom`}
+          } origin-bottom md:w-6 md:h-6`}
         />
-        <HiOutlineHeart className="w-5 h-5" />
+        <HiOutlineHeart className="w-5 h-5 md:w-6 md:h-6" />
       </button>
       {postDetails.likes?.length > 0 && (
-        <span className="text-sm text-gray-800">
+        <span className="text-sm text-gray-800 md:text-base">
           {postDetails.likes.length}
         </span>
       )}

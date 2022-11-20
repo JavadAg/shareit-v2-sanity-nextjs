@@ -50,12 +50,12 @@ const SavePost: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
       <HiOutlineBookmarkAlt
         className={`w-5 h-5 ${
           saved ? "opacity-0" : "opacity-100"
-        } transition-all duration-1000 ease-out`}
+        } transition-all duration-1000 ease-out md:w-6 md:h-6`}
       />
       <HiBookmarkAlt
         className={`absolute w-5 h-5 transition-all duration-1000 ease-out transform overflow-hidden text-gray-700 ${
           saved ? "opacity-100" : "opacity-0"
-        } origin-center`}
+        } origin-center md:w-6 md:h-6`}
       />
     </button>
   )

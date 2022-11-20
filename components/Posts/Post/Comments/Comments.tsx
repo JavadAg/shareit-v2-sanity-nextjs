@@ -13,7 +13,7 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   const { data: session, status } = useSession()
   const [comment, setComment] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  
+
   const handleComment = async () => {
     setIsLoading(true)
     const userid = session?.user.id
@@ -41,16 +41,16 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   return (
     <div className="flex justify-center items-center flex-col w-full gap-2">
       <div className="flex justify-center items-center w-full gap-2">
-        <div className="relative block w-10 h-10 ">
+        <div className="relative block w-10 h-10 md:w-11 md:h-11">
           <Image
             alt="avatar"
             loading="lazy"
             fill
             src={session?.user.image as string}
-            className="rounded-full max-h-full max-w-full w-auto h-auto block border-2 border-gray-100 "
+            className="rounded-full max-h-full max-w-full w-auto h-auto block border-2 border-gray-100"
           />
         </div>
-        <div className="flex justify-center items-center rounded-full border border-gray-200 h-10 text-sm flex-1">
+        <div className="flex justify-center items-center rounded-full border border-gray-200 h-10 text-sm flex-1 md:text-base">
           <input
             onChange={(e) => setComment(e.target.value)}
             maxLength={40}
@@ -71,8 +71,11 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
       </div>
       <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-gray-500 w-full space-y-4">
         {postDetails.comments.length > 0 ? (
-          postDetails.comments.reverse().map((obj: any) => (
-            <div className="flex justify-center items-start flex-col w-full">
+          postDetails.comments.map((obj: any, index: number) => (
+            <div
+              key={index}
+              className="flex justify-center items-start flex-col w-full"
+            >
               <div className="flex w-full">
                 <span className="font-bold text-gray-700">
                   {obj.postedBy.name}:{"  "}

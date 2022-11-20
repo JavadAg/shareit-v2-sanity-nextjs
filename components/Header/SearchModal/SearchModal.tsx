@@ -33,7 +33,7 @@ const SearchModal = () => {
     <div className="flex relative justify-center items-center rounded-full min-w-[2rem] h-8">
       <div
         onClick={() => setIsModalOpen(true)}
-        className="flex w-8 h-8 bg-gray-100 relative justify-center items-center rounded-full z-40"
+        className="flex w-8 h-8 bg-gray-100 relative justify-center items-center rounded-full z-40 cursor-pointer hover:bg-gray-200 duration-200 md:w-9 md:h-9 md:text-xl"
       >
         <RiSearch2Line />
       </div>
@@ -55,10 +55,10 @@ const SearchModal = () => {
               ref={searchTerm}
               type="search"
               onChange={(e) => debounceFn(e)}
-              className="bg-gray-200 h-8 w-4/6 rounded-2xl outline-none border-none px-2"
+              className="bg-gray-200 h-8 w-56 rounded-2xl outline-none border-none px-2 sm:w-64"
             />
             {searchData?.length > 0 ? (
-              <div className="flex justify-between items-start bg-gray-200 w-9/12 px-2 text-sm rounded-2xl py-2">
+              <div className="flex justify-between items-start bg-gray-200 w-64 px-2 text-sm rounded-2xl py-2 sm:w-72 md:text-base">
                 <div className=" flex justify-center items-start flex-col gap-2">
                   <span className="font-bold text-black">Tags</span>
                   <span

@@ -44,10 +44,10 @@ const PostCarousel = ({ assets }: any) => {
         className="overflow-hidden w-full h-full cursor-pointer"
         ref={viewportRef}
       >
-        <div className="flex select-none w-full h-full">
+        <div className="flex justify-center select-none w-full h-full">
           {assets.map((file: any, index: number) => (
             <div
-              className="relative object-cover min-w-full h-full flex justify-center overflow-hidden"
+              className="relative object-cover w-full max-w-md flex justify-center overflow-hidden"
               key={index}
             >
               {file.resource_type === "image" ? (
@@ -56,15 +56,13 @@ const PostCarousel = ({ assets }: any) => {
                   width="0"
                   height="0"
                   loading="lazy"
-                  sizes="(max-width: 768px) 100vw,
-                    (max-width: 1200px) 50vw,
-                    33vw"
+                  sizes="100vw"
                   src={file.url}
-                  className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain block"
+                  className="rounded-2xl w-auto h-auto max-w-full max-h-full object-contain block"
                 />
               ) : file.resource_type === "video" ? (
                 <video
-                  className="rounded-2xl w-auto h-full max-w-full max-h-full object-contain block"
+                  className="rounded-2xl w-auto h-auto max-w-full max-h-full object-contain block"
                   controls
                   loop
                   src={file.url}
