@@ -5,6 +5,8 @@ import { Manrope } from "@next/font/google"
 import { unstable_getServerSession } from "next-auth"
 import { authOptions } from "../pages/api/auth/[...nextauth]"
 import { ServerThemeProvider } from "@wits/next-themes"
+import { Suspense } from "react"
+import Loading from "./loading"
 
 interface RootLayoutProps {
   children: React.ReactNode
@@ -23,12 +25,14 @@ export default async function RootLayout({ children, props }: RootLayoutProps) {
       </head>
       <body>
         <SessionProvider session={session}>
-          <div
-            className={`bg-neutral-50 dark:bg-gray-900 dark:text-white ${manrope.className} pb-16`}
-          >
-            <Header />
-            {children}
-          </div>
+          <Suspense fallback={<Loading />}>
+            <div
+              className={`bg-neutral-50 dark:bg-gray-900 dark:text-white ${manrope.className} pb-16`}
+            >
+              <Header />
+              {children}
+            </div>
+          </Suspense>
         </SessionProvider>
       </body>
     </html>
