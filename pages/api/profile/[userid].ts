@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { randomUUID } from "crypto"
 import type { NextApiRequest, NextApiResponse } from "next"
 import { client } from "../../../utils/client"

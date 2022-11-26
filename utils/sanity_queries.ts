@@ -1,3 +1,41 @@
+export const getFollowingUserPosts = (id: string | string[]) => {
+  const query = `*[_type == "post" && postedBy._ref in ['${id}']] | order(_createdAt desc){
+      _id,
+      _createdAt,
+       caption,
+        assets[]{
+          resource_type,
+          _key,
+          url,
+          width,
+          height
+        },
+        userId,
+        postedBy->{
+          _id,
+          name,
+          avatar
+        },
+      likes,
+      category,
+      tags,
+      savedBy[]->{
+        _id
+      },
+      comments[]{
+        comment,
+        _key,
+        postedBy->{
+        _id,
+        name,
+        avatar
+      },
+      }
+    }`
+
+  return query
+}
+
 export const getAllPosts = () => {
   const query = `*[_type == "post"] | order(_createdAt desc){
       _id,
