@@ -1,5 +1,4 @@
 import React, { useReducer, useState } from "react"
-import { formSteps } from "../../../utils/constants"
 import { RiAddCircleLine } from "react-icons/ri"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
@@ -62,8 +61,6 @@ const UploadModal = () => {
           <FormPreview
             formState={formState}
             setFormState={setFormState}
-            formData={formData}
-            setFormData={setFormData}
             filesPreview={filesPreview}
             setFilesPreview={setFilesPreview}
           />
@@ -158,7 +155,7 @@ const UploadModal = () => {
     <>
       <button
         onClick={() => setModalToggle(true)}
-        className="flex justify-center items-center text-2xl text-gray-600 hover:text-gray-900 duration-300 w-12 h-12 md:text-3xl"
+        className="flex items-center justify-center w-12 h-12 text-2xl text-gray-600 duration-300 dark:text-gray-300 dark:hover:text-gray-400 hover:text-gray-900 md:text-3xl"
       >
         <RiAddCircleLine />
       </button>
@@ -167,11 +164,11 @@ const UploadModal = () => {
           onClick={() => {
             setModalToggle(false)
           }}
-          className="flex justify-center bg-gray-300/70 items-center fixed inset-0 z-50 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300/70 dark:bg-neutral-700/70 backdrop-blur-md"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="flex relative w-96 justify-start py-6 items-center bg-white rounded-3xl flex-col space-y-4 h-[32rem] mx-4 px-4 md:h-[36rem]"
+            className="flex relative w-96 justify-start py-6 items-center bg-white dark:bg-neutral-900 rounded-3xl flex-col space-y-4 h-[32rem] mx-4 px-4 md:h-[36rem]"
           >
             <FormProgress
               currentStep={currentStep}
@@ -179,9 +176,9 @@ const UploadModal = () => {
               filesPreview={filesPreview}
             />
 
-            <div className="rounded-3xl flex justify-center items-center w-full">
+            <div className="flex items-center justify-center w-full rounded-3xl">
               <form
-                className="flex justify-center items-center flex-col w-full"
+                className="flex flex-col items-center justify-center w-full"
                 onSubmit={handleSubmit}
               >
                 {steps()}

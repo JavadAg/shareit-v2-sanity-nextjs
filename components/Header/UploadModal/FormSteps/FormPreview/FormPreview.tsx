@@ -5,25 +5,11 @@ import { imageTypes, videoTypes } from "../../../../../utils/constants"
 import PreviewCarousel from "./PreviewCarousel/PreviewCarousel"
 import { Area, Point } from "react-easy-crop"
 import { toBase64 } from "../../../../../utils/toBase64"
-import { FilePreview } from "../../../../../types/upload.types"
-
-interface FormData {
-  caption: string
-  category: string
-  tags: string[]
-}
-
-interface FormState {
-  error: string
-  loading: boolean
-  isUploading: boolean
-}
+import { FilePreview, FormState } from "../../../../../types/upload.types"
 
 interface IProps {
   formState: FormState
   setFormState: Dispatch<Partial<FormState>>
-  formData: FormData
-  setFormData: Dispatch<Partial<FormData>>
   filesPreview: FilePreview[]
   setFilesPreview: Dispatch<React.SetStateAction<FilePreview[]>>
 }
@@ -31,15 +17,12 @@ interface IProps {
 const FormPreview: React.FC<IProps> = ({
   formState,
   setFormState,
-  setFormData,
   filesPreview,
   setFilesPreview
 }) => {
   const deleteFiles = () => {
     setFilesPreview([])
   }
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const [aspect, setAspect] = useState<number | undefined>(1 / 1)
   const [zoom, setZoom] = useState(1)
@@ -127,9 +110,9 @@ const FormPreview: React.FC<IProps> = ({
   return (
     <>
       {filesPreview.length < 1 ? (
-        <label className="border-dashed space-y-4 border-gray-400 bg-gray-100 hover:bg-gray-200 rounded-2xl border-4 flex flex-col justify-center items-center outline-none cursor-pointer w-full py-2 md:py-6">
+        <label className="flex flex-col items-center justify-center w-full py-2 space-y-4 duration-300 bg-gray-100 border-4 border-gray-400 border-dashed outline-none cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-800/70 rounded-2xl md:py-6">
           <UploadSVG />
-          <div className="text-center text-sm flex justify-center items-center flex-col text-gray-500 md:text-base gap-4 md:gap-4">
+          <div className="flex flex-col items-center justify-center gap-4 text-sm text-center text-gray-500 dark:text-gray-400 md:text-base md:gap-4">
             <span>Jpg, Png ,Webp, Mp4</span>
             <span>Max 5 file</span>
             <span>1 video per post</span>
@@ -158,12 +141,12 @@ const FormPreview: React.FC<IProps> = ({
             filesPreview={filesPreview}
           />
 
-          <div className="flex justify-center items-center flex-col space-y-2 m-2 w-full mt-4">
+          <div className="flex flex-col items-center justify-center w-full m-2 mt-4 space-y-2">
             <select
               onChange={(e) => handleToggleAspectClick(e.target.value)}
               name=""
               id=""
-              className="bg-gray-100 rounded-2xl outline-none py-1 px-2"
+              className="px-2 py-1 bg-gray-100 outline-none dark:bg-neutral-800 rounded-2xl"
             >
               <option value="1/1">1/1</option>
               <option value="4/5">4/5</option>

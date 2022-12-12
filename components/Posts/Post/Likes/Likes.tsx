@@ -2,7 +2,6 @@ import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { HiOutlineHeart, HiHeart } from "react-icons/hi"
 import { useSession } from "next-auth/react"
-import { stat } from "fs"
 import { PostsType } from "../../../../types/posts.types"
 
 interface IProps {
@@ -44,7 +43,7 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
 
   return (
     <div
-      className={`relative space-x-1 group px-1 text-center border border-gray-200 text-red-500 flex justify-center items-center bg-white rounded-full min-w-[32px] h-8 ${
+      className={`relative space-x-1 group px-1 text-center border dark:bg-black  dark:border-neutral-800 border-gray-200 text-red-500 flex justify-center items-center bg-white rounded-full min-w-[32px] h-8 ${
         status === "unauthenticated"
           ? "cursor-not-allowed opacity-40"
           : "opacity-100 cursor-pointer"
@@ -53,7 +52,7 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
       <button
         disabled={isLoading || status === "unauthenticated"}
         onClick={() => handleLike()}
-        className="relative group text-center flex justify-center items-center disabled:cursor-not-allowed disabled:opacity-40"
+        className="relative flex items-center justify-center text-center group disabled:cursor-not-allowed disabled:opacity-40"
       >
         <HiHeart
           className={`absolute w-5 h-5 transition-all duration-1000 ease-out transform overflow-hidden text-red-500 ${
@@ -63,7 +62,7 @@ const Likes: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
         <HiOutlineHeart className="w-5 h-5 md:w-6 md:h-6" />
       </button>
       {postDetails.likes?.length > 0 && (
-        <span className="text-sm text-gray-800 md:text-base">
+        <span className="text-sm text-gray-800 dark:text-gray-200 md:text-base">
           {postDetails.likes.length}
         </span>
       )}

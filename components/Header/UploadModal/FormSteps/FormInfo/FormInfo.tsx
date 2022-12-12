@@ -4,11 +4,7 @@ import { categories } from "../../../../../utils/constants"
 import { useSession } from "next-auth/react"
 import { Listbox } from "@headlessui/react"
 import { RiArrowDropDownLine, RiCheckFill } from "react-icons/ri"
-import {
-  FilePreview,
-  FormData,
-  FormState
-} from "../../../../../types/upload.types"
+import { FormData } from "../../../../../types/upload.types"
 
 interface IProps {
   formData: FormData
@@ -22,20 +18,20 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
   return (
     <>
       {status === "authenticated" ? (
-        <div className="flex justify-center items-center flex-col w-3/4 space-y-4 mt-4 md:gap-6">
+        <div className="flex flex-col items-center justify-center w-3/4 mt-4 space-y-4 md:gap-6">
           <input
             onChange={(e) => setFormData({ caption: e.target.value })}
-            className="w-full rounded-3xl h-8 border border-gray-200 px-2 outline-none"
+            className="w-full h-8 px-2 border border-gray-200 outline-none dark:border-neutral-800 rounded-3xl dark:bg-neutral-800"
             type="text"
             maxLength={100}
             placeholder="Caption"
           />
           {formData.tags.length > 0 && (
-            <div className="flex w-full justify-center items-center overflow-x-scroll gap-1 py-2">
+            <div className="flex items-center justify-center w-full gap-1 py-2 overflow-x-scroll">
               {formData.tags.map((tag, index) => (
                 <div
                   key={index}
-                  className="bg-gray-100 rounded-lg border border-gray-200 shadow-sm p-1 flex justify-center items-center space-x-2 text-center"
+                  className="flex items-center justify-center p-1 space-x-2 text-center bg-gray-100 border border-gray-200 rounded-lg shadow-sm dark:border-neutral-800"
                 >
                   <span className="text-gray-500">#{tag}</span>
                   <button
@@ -54,9 +50,9 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
             </div>
           )}
 
-          <div className="relative flex h-8 justify-center items-center border border-gray-200 rounded-3xl px-2 w-full">
+          <div className="relative flex items-center justify-center w-full h-8 px-2 border border-gray-200 dark:bg-neutral-800 dark:border-neutral-800 rounded-3xl">
             <input
-              className="w-full h-full outline-none"
+              className="w-full h-full outline-none dark:bg-neutral-800"
               type="text"
               value={tag}
               maxLength={15}
@@ -74,7 +70,7 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
                 }),
                   setTag("")
               }}
-              className="p-1 text-2xl absolute right-0 disabled:opacity-30"
+              className="absolute right-0 p-1 text-2xl disabled:opacity-30"
             >
               <HiPlusCircle />
             </button>
@@ -85,18 +81,18 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
             onChange={(value) => setFormData({ category: value })}
           >
             <div className="relative w-full">
-              <Listbox.Button className="relative w-full cursor-default border border-gray-200 rounded-3xl px-2 h-8 text-left outline-none">
+              <Listbox.Button className="relative w-full h-8 px-2 text-left border border-gray-200 outline-none cursor-default dark:border-neutral-800 rounded-3xl dark:bg-neutral-800">
                 <span className="block truncate">
                   {formData.category ? formData.category : "Select Category"}
                 </span>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                   <RiArrowDropDownLine
-                    className="h-5 w-5 text-gray-400"
+                    className="w-5 h-5 text-gray-400"
                     aria-hidden="true"
                   />
                 </span>
               </Listbox.Button>
-              <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg dark:bg-neutral-900 max-h-60 ring-1 ring-black dark:ring-neutral-700 ring-opacity-5 focus:outline-none sm:text-sm">
                 {categories.map((category) => (
                   <Listbox.Option
                     key={category}
@@ -104,8 +100,8 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
                         active
-                          ? "bg-indigo-100 text-indigo-900"
-                          : "text-gray-900"
+                          ? "bg-indigo-100 text-indigo-900 dark:bg-neutral-800 dark:text-indigo-100"
+                          : "text-gray-900 dark:text-gray-200"
                       }`
                     }
                   >
@@ -121,7 +117,7 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
                         {selected ? (
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-600">
                             <RiCheckFill
-                              className="h-5 w-5"
+                              className="w-5 h-5"
                               aria-hidden="true"
                             />
                           </span>
@@ -139,11 +135,11 @@ const FormInfo: React.FC<IProps> = ({ formData, setFormData }) => {
             }
             type="submit"
             value="Share it"
-            className="w-full rounded-3xl h-8 border border-gray-200 px-2 text-white bg-indigo-400 disabled:bg-indigo-200/40 disabled:text-gray-200"
+            className="w-full h-8 px-2 text-white duration-300 bg-indigo-400 border border-gray-200 cursor-pointer hover:bg-indigo-500 dark:text-neutral-900 dark:border-neutral-800 rounded-3xl disabled:bg-indigo-200/40 disabled:text-gray-200"
           />
         </div>
       ) : (
-        <span className="p-1 rounded-lg px-2 text-red-500">
+        <span className="p-1 px-2 text-red-500 rounded-lg">
           Login to send post!
         </span>
       )}

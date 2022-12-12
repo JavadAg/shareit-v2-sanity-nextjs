@@ -37,7 +37,7 @@ const SearchModal = () => {
     <div className="flex relative justify-center items-center rounded-full min-w-[2rem] h-8">
       <div
         onClick={() => setIsModalOpen(true)}
-        className="flex w-8 h-8 bg-gray-100 relative justify-center items-center rounded-full z-40 cursor-pointer hover:bg-gray-200 duration-200 md:w-9 md:h-9 md:text-xl"
+        className="relative z-40 flex items-center justify-center w-8 h-8 duration-200 bg-gray-100 rounded-full cursor-pointer dark:bg-neutral-800 dark:hover:bg-neutral-900 hover:bg-gray-200 md:w-9 md:h-9 md:text-xl"
       >
         <RiSearch2Line />
       </div>
@@ -48,23 +48,27 @@ const SearchModal = () => {
               (searchTerm.current!.value = ""),
               setIsModalOpen(false)
           }}
-          className="flex justify-start pt-44 items-center flex-col fixed inset-0 backdrop-blur-md bg-gray-800 bg-opacity-90 h-screen w-screen z-50"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-start w-screen h-screen bg-gray-800 pt-44 backdrop-blur-md bg-opacity-90"
         >
           <div
-            className="flex justify-center items-center flex-col space-y-2 w-full"
+            className="flex flex-col items-center justify-center w-full space-y-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <span className="text-gray-200">Search tag or username</span>
+            <span className="text-gray-200 dark:text-neutral-400">
+              Search tag or username
+            </span>
             <input
               ref={searchTerm}
               type="search"
               onChange={(e) => debounceFn(e)}
-              className="bg-gray-200 h-8 w-56 rounded-2xl outline-none border-none px-2 sm:w-64"
+              className="w-56 h-8 px-2 bg-gray-200 border-none outline-none dark:bg-neutral-800 rounded-2xl sm:w-64"
             />
             {searchData?.length > 0 ? (
-              <div className="flex justify-between items-start bg-gray-200 w-64 px-2 text-sm rounded-2xl py-2 sm:w-72 md:text-base">
-                <div className=" flex justify-center items-start flex-col gap-2">
-                  <span className="font-bold text-black">Tags</span>
+              <div className="flex items-start justify-between w-64 px-2 py-2 text-sm bg-gray-200 dark:bg-neutral-900 rounded-2xl sm:w-72 md:text-base">
+                <div className="flex flex-col items-start justify-center gap-2 ">
+                  <span className="font-bold text-black dark:text-white">
+                    Tags
+                  </span>
                   <span
                     onClick={() => {
                       router.push(`/search/${searchTerm.current?.value}`)
@@ -72,13 +76,15 @@ const SearchModal = () => {
                         (searchTerm.current!.value = ""),
                         setIsModalOpen(false)
                     }}
-                    className="bg-gradient-to-tr from-blue-500 to-cyan-300 p-1 rounded-xl px-2 cursor-pointer"
+                    className="p-1 px-2 cursor-pointer bg-gradient-to-tr from-blue-500 to-cyan-300 rounded-xl"
                   >
                     #{searchTerm.current?.value}
                   </span>
                 </div>
-                <div className=" flex justify-center items-start flex-col gap-2">
-                  <span className="font-bold text-black">Users</span>
+                <div className="flex flex-col items-start justify-center gap-2 ">
+                  <span className="font-bold text-black dark:text-white">
+                    Users
+                  </span>
                   {searchData.map((item) => (
                     <span
                       key={item._id}
@@ -88,7 +94,7 @@ const SearchModal = () => {
                           (searchTerm.current!.value = ""),
                           setIsModalOpen(false)
                       }}
-                      className="bg-gradient-to-tr from-indigo-200 to-violet-300 p-1 rounded-xl px-2 cursor-pointer"
+                      className="p-1 px-2 cursor-pointer bg-gradient-to-tr from-indigo-300 to-violet-400 rounded-xl"
                     >
                       {item.name}
                     </span>

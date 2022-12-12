@@ -44,53 +44,55 @@ const Comments: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
   }
 
   return (
-    <div className="flex justify-center items-center flex-col w-full gap-2">
-      <div className="flex justify-center items-center w-full gap-2">
+    <div className="flex flex-col items-center justify-center w-full gap-2">
+      <div className="flex items-center justify-center w-full gap-2">
         <div className="relative block w-10 h-10 md:w-11 md:h-11">
           <Image
             alt="avatar"
             loading="lazy"
             fill
             src={session?.user.image as string}
-            className="rounded-full max-h-full max-w-full w-auto h-auto block border-2 border-gray-100"
+            className="block w-auto h-auto max-w-full max-h-full border-2 border-gray-100 rounded-full dark:border-neutral-800"
           />
         </div>
-        <div className="flex justify-center items-center rounded-full border border-gray-200 h-10 text-sm flex-1 md:text-base">
+        <div className="flex items-center justify-center flex-1 h-10 text-sm border border-gray-200 rounded-full dark:border-neutral-800 md:text-base">
           <input
             onChange={(e) => setComment(e.target.value)}
             maxLength={40}
             value={comment}
             contentEditable="true"
-            className="h-full w-full rounded-3xl pl-2 outline-none"
+            className="w-full h-full pl-2 outline-none rounded-3xl dark:bg-black"
             type="text"
             placeholder="write a comment"
           />
           <button
             disabled={isLoading || comment.length < 1}
-            className="bg-gradient-to-br from-indigo-300 to-violet-400 rounded-full px-2 py-1 text-gray-100 disabled:opacity-30 mr-2"
+            className="px-2 py-1 mr-2 text-gray-100 rounded-full dark:text-gray-200 bg-gradient-to-br from-indigo-300 to-violet-400 disabled:opacity-30"
             onClick={() => handleComment()}
           >
             Send
           </button>
         </div>
       </div>
-      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-gray-500 w-full space-y-4">
+      <Disclosure.Panel className="w-full px-4 pt-4 pb-2 space-y-4 text-sm text-gray-500">
         {postDetails.comments.length > 0 ? (
           postDetails.comments.map((obj, index) => (
             <div
               key={index}
-              className="flex justify-center items-start flex-col w-full"
+              className="flex flex-col items-start justify-center w-full"
             >
               <div className="flex w-full">
-                <span className="font-bold text-gray-700">
+                <span className="font-bold text-gray-700 dark:text-gray-400">
                   {obj.postedBy.name}:{"  "}
                 </span>
-                <span className="break-all">{obj.comment}</span>
+                <span className="break-all dark:text-gray-500">
+                  {obj.comment}
+                </span>
               </div>
             </div>
           ))
         ) : (
-          <span className="text-center text-orange-400 font-bold flex justify-center">
+          <span className="flex justify-center font-bold text-center text-orange-400">
             No comment !
           </span>
         )}

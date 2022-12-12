@@ -24,6 +24,7 @@ interface Likes {
 }
 
 interface SavedBy {
+  [x: string]: string
   _id: string
 }
 

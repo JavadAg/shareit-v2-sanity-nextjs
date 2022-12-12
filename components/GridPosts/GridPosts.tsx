@@ -22,8 +22,8 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
   return (
     <Tab.Group>
       {pathname === "/discover" && <Category />}
-      <Tab.Panels className="mt-2 w-full max-w-6xl ">
-        <Tab.Panel className="rounded-2xl bg-white focus:outline-none border border-gray-300/50">
+      <Tab.Panels className="w-full max-w-6xl mt-2 ">
+        <Tab.Panel className="bg-white border rounded-2xl dark:bg-black focus:outline-none border-gray-300/50 dark:border-neutral-900">
           {posts.length > 0 ? (
             <div className="grid grid-cols-[repeat(auto-fill,_minmax(45%,_1fr))] auto-rows-[50px] gap-2 p-2 lg:grid-cols-[repeat(auto-fill,_minmax(32%,_1fr))]">
               {posts.map((post) => (
@@ -44,16 +44,16 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
                       }}
                       className="opacity-0 flex gap-4 justify-center items-center z-[1] absolute w-full h-full inset-0 group-hover:opacity-70 bg-indigo-300 duration-300 rounded-2xl overflow-hidden cursor-pointer"
                     >
-                      <span className="flex justify-center items-center">
+                      <span className="flex items-center justify-center">
                         <RiHeartFill />: {post.likes.length}
                       </span>
-                      <span className="flex justify-center items-center">
+                      <span className="flex items-center justify-center">
                         <RiChat1Fill />: {post.comments.length}
                       </span>
                     </button>
 
                     {post.assets[0].resource_type === "image" ? (
-                      <div className="relative object-cover min-w-full h-full flex justify-center overflow-hidden">
+                      <div className="relative flex justify-center object-cover h-full min-w-full overflow-hidden">
                         <Image
                           alt="post_image"
                           width="0"
@@ -63,13 +63,13 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
                 (max-width: 1200px) 50vw,
                 33vw"
                           src={post.assets[0].url}
-                          className="rounded-2xl w-full h-full max-w-full max-h-full object-cover block"
+                          className="block object-cover w-full h-full max-w-full max-h-full rounded-2xl"
                         />
                       </div>
                     ) : post.assets[0].resource_type === "video" ? (
-                      <div className="relative object-cover min-w-full h-full flex justify-center overflow-hidden">
+                      <div className="relative flex justify-center object-cover h-full min-w-full overflow-hidden">
                         <video
-                          className="rounded-2xl w-full h-full max-w-full max-h-full object-cover block"
+                          className="block object-cover w-full h-full max-w-full max-h-full rounded-2xl"
                           src={post.assets[0].url}
                         />
                       </div>
@@ -84,7 +84,7 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
               )}
             </div>
           ) : (
-            <span className="w-full mt-4 text-center font-bold self-center flex justify-center items-center">
+            <span className="flex items-center self-center justify-center w-full mt-4 font-bold text-center">
               No post yet!
             </span>
           )}
@@ -92,7 +92,7 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
         {categories.map((category: string) => (
           <Tab.Panel
             key={category}
-            className="rounded-2xl bg-white focus:outline-none"
+            className="bg-white dark:bg-black rounded-2xl focus:outline-none"
           >
             {posts.length > 0 ? (
               <div className="grid grid-cols-[repeat(auto-fill,_minmax(45%,_1fr))] auto-rows-[50px] gap-2 p-2 lg:grid-cols-[repeat(auto-fill,_minmax(32%,_1fr))]">
@@ -122,7 +122,7 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
                         </button>
 
                         {post.assets[0].resource_type === "image" ? (
-                          <div className="relative object-cover min-w-full h-full flex justify-center overflow-hidden">
+                          <div className="relative flex justify-center object-cover h-full min-w-full overflow-hidden">
                             <Image
                               alt="post_image"
                               width="0"
@@ -132,13 +132,13 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
                 (max-width: 1200px) 50vw,
                 33vw"
                               src={post.assets[0].url}
-                              className="rounded-2xl w-full h-full max-w-full max-h-full object-cover block"
+                              className="block object-cover w-full h-full max-w-full max-h-full rounded-2xl"
                             />
                           </div>
                         ) : post.assets[0].resource_type === "video" ? (
-                          <div className="relative object-cover min-w-full h-full flex justify-center overflow-hidden">
+                          <div className="relative flex justify-center object-cover h-full min-w-full overflow-hidden">
                             <video
-                              className="rounded-2xl w-full h-full max-w-full max-h-full object-cover block"
+                              className="block object-cover w-full h-full max-w-full max-h-full rounded-2xl"
                               src={post.assets[0].url}
                             />
                           </div>
@@ -153,7 +153,7 @@ const GridPosts: React.FC<IProps> = ({ posts }) => {
                 )}
               </div>
             ) : (
-              <span className="w-full mt-4 text-center font-bold self-center flex justify-center items-center">
+              <span className="flex items-center self-center justify-center w-full mt-4 font-bold text-center">
                 No post yet!
               </span>
             )}

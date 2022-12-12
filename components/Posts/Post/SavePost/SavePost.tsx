@@ -21,24 +21,20 @@ const SavePost: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postDetails._id}`,
         { userid, type: "save", saved }
       )
-      const data = res.data
+
       setPostDetails({ ...postDetails, savedBy: res.data.savedBy })
 
       setIsLoading(false)
-
-      return data
     }
   }
 
   let filterSaved = postDetails.savedBy?.filter(
-    (item) => item._id === (session?.user.id as unknown as string)
+    (item) => item._id || item._ref === (session?.user.id as unknown as string)
   )
 
   useEffect(() => {
-    if (filterSaved?.length > 0 && status === "authenticated") {
-      setSaved(true)
-    } else {
-      setSaved(false)
+    if (status === "authenticated") {
+      filterSaved.length > 0 ? setSaved(true) : setSaved(false)
     }
   }, [filterSaved])
 
@@ -46,7 +42,7 @@ const SavePost: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
     <button
       disabled={isLoading || status === "unauthenticated"}
       onClick={() => handleSavePost()}
-      className="relative group text-4xl text-gray-700 flex justify-center items-center border border-gray-200 bg-white rounded-full w-8 h-8 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+      className="relative flex items-center justify-center w-8 h-8 text-4xl text-gray-700 bg-white border border-gray-200 rounded-full cursor-pointer group dark:text-gray-200 dark:bg-black dark:border-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
     >
       <HiOutlineBookmarkAlt
         className={`w-5 h-5 ${
@@ -54,7 +50,7 @@ const SavePost: React.FC<IProps> = ({ postDetails, setPostDetails }) => {
         } transition-all duration-1000 ease-out md:w-6 md:h-6`}
       />
       <HiBookmarkAlt
-        className={`absolute w-5 h-5 transition-all duration-1000 ease-out transform overflow-hidden text-gray-700 ${
+        className={`absolute w-5 h-5 transition-all duration-1000 ease-out transform overflow-hidden text-gray-700 dark:text-gray-200 ${
           saved ? "opacity-100" : "opacity-0"
         } origin-center md:w-6 md:h-6`}
       />

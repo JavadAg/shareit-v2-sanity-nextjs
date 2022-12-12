@@ -12,11 +12,11 @@ const PostModal: React.FC<IProps> = ({ setToggleModal, post }) => {
     <>
       <div
         onClick={() => setToggleModal(false)}
-        className="fixed z-50 inset-0 bg-gray-7 backdrop-blur-md 00/70 flex justify-center items-center w-full h-full overscroll-contain"
+        className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-gray-7 backdrop-blur-md 00/70 overscroll-contain"
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-5/6 max-h-full rounded-2xl block overscroll-contain overflow-y-auto max-w-xl mr-auto ml-auto"
+          className="block w-5/6 max-w-xl max-h-full ml-auto mr-auto overflow-y-auto bg-white dark:bg-black rounded-2xl overscroll-contain"
         >
           <Post post={post!} />
         </div>

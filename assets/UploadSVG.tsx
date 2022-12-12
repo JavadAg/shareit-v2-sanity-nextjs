@@ -4,7 +4,7 @@ const UploadSVG = () => {
   return (
     <svg
       aria-label="Icon to represent media such as images or videos"
-      className="_ab6-"
+      className="_ab6- dark:text-gray-400"
       height="77"
       role="img"
       viewBox="0 0 97.6 77.3"
