@@ -12,7 +12,7 @@ const PostModal: React.FC<IProps> = ({ setToggleModal, post }) => {
     <>
       <div
         onClick={() => setToggleModal(false)}
-        className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-gray-7 backdrop-blur-md 00/70 overscroll-contain"
+        className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-gray-7 backdrop-blur-md overscroll-contain"
       >
         <div
           onClick={(e) => e.stopPropagation()}

@@ -9,7 +9,7 @@ interface IProps {
 
 const DiscoverPage: NextPage<IProps> = ({ posts }) => {
   return (
-    <main className="h-full flex justify-start items-center flex-col w-full min-h-[calc(100vh-4rem)] px-2 text-slate-800">
+    <main className="h-full flex justify-start items-center flex-col w-full min-h-[calc(100vh-4rem)] px-2 text-slate-800 dark:text-gray-200">
       <GridPosts posts={posts} />
     </main>
   )

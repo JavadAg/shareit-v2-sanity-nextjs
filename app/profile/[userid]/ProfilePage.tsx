@@ -9,7 +9,7 @@ interface IProps {
 
 const ProfilePage: NextPage<IProps> = ({ user }) => {
   return (
-    <main className="h-screen flex justify-start items-center flex-col w-full p-2 text-slate-800">
+    <main className="flex flex-col items-center justify-start w-full h-screen p-2 text-slate-800 dark:text-gray-200">
       <Profile user={user} />
     </main>
   )
