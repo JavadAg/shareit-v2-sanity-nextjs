@@ -26,11 +26,12 @@ export default async function Page() {
 
   if (session) { */
   const posts: PostsType[] = await getPosts(/* session?.user.id */)
+
   return <HomePage posts={posts} />
   /* } else {
     return (
-      <div className="h-screen w-full flex justify-center items-center">
-        <span className="font-bold md:text-2xl text-red-400">
+      <div className="flex items-center justify-center w-full h-screen">
+        <span className="font-bold text-red-400 md:text-2xl">
           Please Login to display following posts
         </span>
       </div>

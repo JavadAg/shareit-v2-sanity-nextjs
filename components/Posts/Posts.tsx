@@ -8,11 +8,11 @@ interface IProps {
 
 const Posts: React.FC<IProps> = ({ posts }) => {
   return (
-    <div className="flex justify-start items-center flex-col flex-1 space-y-6 w-full mt-4 max-w-lg">
+    <div className="flex flex-col items-center justify-start flex-1 w-full max-w-lg mt-4 space-y-6">
       {posts.length > 0 ? (
         posts.map((post) => <Post key={post._id} post={post} />)
       ) : (
-        <span className="w-full text-center h-screen font-bold">
+        <span className="w-full h-screen font-bold text-center">
           No post yet!
         </span>
       )}
